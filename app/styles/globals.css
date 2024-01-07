@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+a {
+    text-decoration: none;
+    color: #fff;
+}
+.main {
+    position: relative;
+}
+/* google map */
+.gmnoprint {
+    display: none;
+}
+
+/* search-bar */
+.search-bar-position {
+    position: absolute;
+    top: 2%;
+    left: 3%;
+    z-index: 10000;
+    color: black;
+    background: #fff;
+    display: flex;
+    width: 40%;
+    border-radius: 10px;
+}
+.search-bar-left {
+    background: #EE7800;
+    width: 10%;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2% 0;
+    cursor: pointer;
+}
+.MuiSvgIcon-root {
+    color: #fff;
+}
+.search-bar-right {
+    background: #EE7800;
+    width: 10%;
+    border-radius: 0 10px 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2% 0;
+    cursor: pointer;
+}
+.search-bar-center {
+    width: 80%;
+}
+.search-bar-center input {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+@media (max-width: 767px) {
+    .search-bar-position {
+        width: 80%;
+    }
+    .search-bar-left {
+        width: 15%;
+    }
+    .search-bar-right {
+        width: 15%;
+    }
+    .search-bar-center {
+        width: 70%;
+    }
+}
+/* menu-bar */
+.menu-bar {
+    background: #EE7800;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10002;
+    width: 25%;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+}
+.menu-bar.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.grey-filter {
+    background: #D9D9D9;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+}
+.grey-filter.active {
+    opacity: .75;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.close-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 3%;
+    right: 5%;
+}
+.menu-bar-contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 5%;
+    color: #fff;
+}
+@media (max-width: 767px) {
+    .menu-bar {
+        width: 100%;
+        height: 100vh;
+    }
+}
