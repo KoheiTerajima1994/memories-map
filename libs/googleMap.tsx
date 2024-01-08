@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';

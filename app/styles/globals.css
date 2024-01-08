@@ -126,3 +126,17 @@ a {
         height: 100vh;
     }
 }
+
+/* login-page */
+.login-page-bg {
+    background: #EE7800;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+.login-page p {
+    text-align: center;
+}
