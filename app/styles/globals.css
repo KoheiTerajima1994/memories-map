@@ -140,3 +140,7 @@ a {
 .login-page p {
     text-align: center;
 }
+.input-wrapper {
+    display: flex;
+    align-items: center;
+}

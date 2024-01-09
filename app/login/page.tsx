@@ -9,9 +9,13 @@ const Login = () => {
         <div className="login-page-bg">
             <div className="login-page">
                 <p>みんなの<br />思い出MAP</p>
-                <div>
+                <div className="input-wrapper">
                     <label htmlFor="mail">メールアドレス</label>
                     <input type="text" id="mail" />
+                </div>
+                <div className="input-wrapper">
+                    <label htmlFor="pass">パスワード</label>
+                    <input type="text" id="pass" />
                 </div>
             </div>
         </div>
