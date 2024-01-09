@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,14 +10,6 @@ const MapComponent = () => {
 
   // ハンバーガーメニューの開閉
   const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
-
-  // ピン立て用
-  const [center, setCenter] = useState<{ lat: number, lng: number }>({
-    lat: 35.68134074965259,
-    lng: 139.76719989855425,
-  });
-  const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
-
   const openMenu = () => {
     setIsMenuBarActive(true);
   }
@@ -25,65 +17,69 @@ const MapComponent = () => {
     setIsMenuBarActive(false);
   }
 
+  // マップ初期位置
+  const [center, setCenter] = useState<{ lat: number, lng: number }>({
+    lat: 35.68134074965259,
+    lng: 139.76719989855425,
+  });
+  // const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
+
   // マップサイズ
   const mapContainerStyle = {
   height: '100vh',
   width: '100vw',
   };
 
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    // クリックした場所の緯度経度情報
-    const clickedLatLng = {
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    };
+  // const handleMapClick = (event: google.maps.MapMouseEvent) => {
+  //   // クリックした場所の緯度経度情報
+  //   const clickedLatLng = {
+  //     lat: event.latLng.lat(),
+  //     lng: event.latLng.lng(),
+  //   };
 
-    // 新しいピンを追加
-    setMarkers((prevMarkers) => [...prevMarkers, clickedLatLng]);
-  };
-
-  // // マップの型
-  // type MarkerPoint = {
-  //   lat: number,
-  //   lng: number,
-  // }
-  // // マップの初期値
-  // const center: MarkerPoint = {
-  //   lat: 35.68134074965259,
-  //   lng: 139.76719989855425
-  // }
-
-  // 検索機能は一旦見送り
-  // const [map, setMap] = useState<string | null>(null);
-  // const [maps, setMaps] = useState<string | null>(null);
-  // const [geocoder, setGeocoder] = useState<string | null>(null);
-  // const [address, setAddress] = useState<string | null>(null);
-  // const [marker, setMarker] = useState<string | null>(null);
-
-  // const handleApiLoaded = (obj) => {
-  //   setMap(obj.map);
-  //   setMaps(obj.maps);
-  //   setGeocoder(new obj.maps.Geocoder());
+  //   // 新しいピンを追加
+  //   setMarkers((prevMarkers) => [...prevMarkers, clickedLatLng]);
   // };
 
-  // const search = () => {
-  //   geocoder.geocode({
-  //     address,
-  //   }, (results, status) => {
-  //     if (status === maps.GeocoderStatus.OK) {
-  //       map.setCenter(results[0].geometry.location);
-  //       if (marker) {
-  //         marker.setMap(null);
-  //       }
-  //       setMarker(new maps.Marker({
-  //         map,
-  //         position: results[0].geometry.location,
-  //       }));
-  //       console.log(results[0].geometry.location.lat());
-  //       console.log(results[0].geometry.location.lng());
-  //     }
-  //   });
-  // };
+  type MarkerPoint = {
+    lat: number,
+    lng: number,
+  }
+  const [markerPoint, setMarkerPoint] = useState<MarkerPoint>(center);
+
+  const mapRef = useRef();
+  const onMapLoad = useCallback((map: any) => {
+    mapRef.current = map;
+  }, []);
+
+  const [searchWord, setSearchWord] = useState<string>('');
+
+  // 検索
+  function getMapData() {
+    try {
+      // geocoderオブジェクトの取得
+      const geocoder = new window.google.maps.Geocoder();
+      let getLat = 0;
+      let getLng = 0;
+      // 検索キーワードを使ってGeocodeでの位置検索
+      geocoder.geocode({ address: searchWord }, async (results, status) => {
+        if (status === 'OK' && results) {
+          getLat = results[0].geometry.location.lat();
+          getLng = results[0].geometry.location.lng();
+          const center = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng()
+          };
+          setMarkerPoint(center);
+        }
+      });
+      alert('検索するよ');
+
+    } catch (error) {
+      alert('検索処理でエラーが発生しました！');
+      throw error;
+    }
+  }
 
   return (
         <>
@@ -92,24 +88,32 @@ const MapComponent = () => {
               <MenuIcon></MenuIcon>
             </div>
             <div className="search-bar-center">
-              <input id="pac-input" type="text" placeholder="検索" />
+              <input
+              id="pac-input"
+              type="text"
+              placeholder="検索"
+              onChange={(e) => { setSearchWord(e.target.value) }}
+              />
             </div>
-            <div className="search-bar-right">
+            <div className="search-bar-right" onClick={async () => { await getMapData() }}>
               <SearchIcon></SearchIcon>
             </div>
           </div>
           <LoadScript googleMapsApiKey = {process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              center={center}
+              // center={center}
+              center={markerPoint}
               zoom={15}
-              onClick={handleMapClick}
+              // onClick={handleMapClick}
+              onLoad={onMapLoad}
             >
+              <Marker position={markerPoint} />
               {/* <Marker position={center} /> */}
               {/* ピンを表示 */}
-              {markers.map((marker, index) => (
+              {/* {markers.map((marker, index) => (
                 <Marker key={index} position={marker} />
-              ))}
+              ))} */}
             </GoogleMap>
           </LoadScript>
           <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>

@@ -144,3 +144,14 @@ a {
     display: flex;
     align-items: center;
 }
+.login-btn-wrapper,
+.top-btn-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-btn {
+    background: #0080DE;
+    color: #fff;
+    padding: 2% 3%;
+}

@@ -17,6 +17,12 @@ const Login = () => {
                     <label htmlFor="pass">パスワード</label>
                     <input type="text" id="pass" />
                 </div>
+                <div className="login-btn-wrapper">
+                    <a href="" className="login-btn">ログイン</a>
+                </div>
+                <div className="top-btn-wrapper">
+                    <a href="">TOPに戻る</a>
+                </div>
             </div>
         </div>
     );
