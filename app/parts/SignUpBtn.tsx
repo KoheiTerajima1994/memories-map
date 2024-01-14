@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, MouseEvent, useEffect } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged, User, } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/libs/firebase";
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
