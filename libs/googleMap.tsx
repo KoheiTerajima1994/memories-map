@@ -40,21 +40,24 @@ const MapComponent = () => {
   //   // 新しいピンを追加
   //   setMarkers((prevMarkers) => [...prevMarkers, clickedLatLng]);
   // };
-
+  // マーカーポイントの型定義
   type MarkerPoint = {
     lat: number,
     lng: number,
   }
   const [markerPoint, setMarkerPoint] = useState<MarkerPoint>(center);
 
+  // 参照を保持し、その値をメモ化しているので、再レンダリングが起こらない
   const mapRef = useRef();
+  // メモ化されたコールバックを返す
   const onMapLoad = useCallback((map: any) => {
     mapRef.current = map;
   }, []);
 
+  // 検索ワード入力用
   const [searchWord, setSearchWord] = useState<string>('');
 
-  // 検索
+  // キーワードをもとに検索させる関数
   function getMapData() {
     try {
       // geocoderオブジェクトの取得

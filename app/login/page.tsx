@@ -2,6 +2,7 @@
 
 import React from 'react';
 import '../styles/globals.css';
+import SignUpBtn from "../parts/signUpBtn";
 
 const Login = () => {
 
@@ -9,6 +10,7 @@ const Login = () => {
         <div className="login-page-bg">
             <div className="login-page">
                 <p>みんなの<br />思い出MAP</p>
+                <SignUpBtn />
                 <div className="input-wrapper">
                     <label htmlFor="mail">メールアドレス</label>
                     <input type="text" id="mail" />
