@@ -5,6 +5,8 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import Link from 'next/link';
+import LogoutBtn from '../app/parts/LogoutBtn';
 
 const MapComponent = () => {
 
@@ -124,9 +126,10 @@ const MapComponent = () => {
             <div className="menu-bar-contents">
               <p>みんなの思い出MAP</p>
               <p>このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
-              <a href="">ログイン</a>
-              <a href="">登録はこちら</a>
-              <a href="">使い方</a>
+              <Link href="/login">ログイン</Link>
+              <Link href="/signup">登録はこちら</Link>
+              <Link href="">使い方</Link>
+              <LogoutBtn />
             </div>
           </div>
       <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>

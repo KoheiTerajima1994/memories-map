@@ -2,7 +2,7 @@
 
 import React from 'react';
 import '../styles/globals.css';
-import SignUpBtn from "../parts/signUpBtn";
+import SignUpBtn from "../parts/SignUpBtn";
 
 const Login = () => {
 
