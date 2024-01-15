@@ -9,7 +9,9 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Link from 'next/link';
 import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth, storage } from './firebase';
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 const MapComponent = () => {
 
@@ -110,6 +112,47 @@ const MapComponent = () => {
     setIsImgUploaderActive(false);
   }
 
+  // 画像アップローダー
+
+//   const postImage = async(image=null) => {
+//     let uploadResult = '';
+ 
+//     if(image.name){
+//         const storageRef = ref(storage);
+//         const ext = image.name.split('.').pop();
+//         const hashName = Math.random().toString(36).slice(-8);
+//         const fullPath = '/images/' + hashName + '.' + ext;
+//         const uploadRef = ref(storageRef, fullPath);
+ 
+//         // 'file' comes from the Blob or File API
+//         await uploadBytes(uploadRef, image).then(async function(result) {
+//             console.log(result);
+//             console.log('Uploaded a blob or file!');
+ 
+//             await getDownloadURL(uploadRef).then(function(url){
+//                 uploadResult = url;
+//             });
+//         });
+//     }
+//     return uploadResult;
+// }
+//   const [image, setImage] = useState(null);
+//   const [createObjectURL, setCreateObjectURL] = useState(null);
+
+//   const uploadToClient = (event: any) => {
+//     if(event.target.files && event.target.files[0]) {
+//       const file = event.target.files[0];
+
+//       setImage(file);
+//       setCreateObjectURL(URL.createObjectURL(file));
+//     }
+//   }
+
+//   const uploadToServer = async () => {
+//     const result = await postImage(image);
+//     console.log(result);
+//   }
+
   return (
         <>
           <div className="search-bar-position">
@@ -164,23 +207,22 @@ const MapComponent = () => {
             </div>
           </div>
           {/* ピンを追加 */}
-          <div className={`grey-filter ${isImgUploaderActive ? 'active' : ''}`} onClick={closeImgUploader}></div>
           <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
-            {/* コメント、撮影日時、画像 */}
             <div>
+              <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
-                  <label htmlFor="date-and-time">撮影日時</label>
+                  <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
                   <input type="datetime-local" id="date-and-time" />
               </div>
               <div className="input-wrapper">
-                  <label htmlFor="img-fileup">画像投稿</label>
+                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。</label>
                   <input type="file" id="img-fileup" />
               </div>
               <div className="input-wrapper">
-                  <label htmlFor="comment">コメント</label>
+                  <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
                   <textarea id="comment" />
               </div>
-              <a href="" className="stop-posting">投稿する</a>
+              <div className="stop-posting">投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>
