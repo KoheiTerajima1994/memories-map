@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Link from 'next/link';
 import LogoutBtn from '../app/parts/LogoutBtn';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './firebase';
 
 const MapComponent = () => {
 
@@ -86,6 +89,18 @@ const MapComponent = () => {
     }
   }
 
+  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuを表示
+  const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+      onAuthStateChanged(auth, (currentUser) => {
+          if(currentUser) {
+              setUser(currentUser);
+              setIsUnderMenuActive(true);
+          }
+      });
+  }, []);
+
   return (
         <>
           <div className="search-bar-position">
@@ -132,7 +147,13 @@ const MapComponent = () => {
               <LogoutBtn />
             </div>
           </div>
-      <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
+          <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
+          <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
+            <div className="register-photo">
+              <AddAPhotoIcon />
+              <p>地図に写真を追加する</p>
+            </div>
+          </div>
         </>
   );
 };

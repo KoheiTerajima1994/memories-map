@@ -127,6 +127,26 @@ a {
     }
 }
 
+/* top-under-menu */
+.top-under-menu {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.register-photo {
+    padding: 2%;
+}
+.register-photo .MuiSvgIcon-root {
+    color: #333;
+    display: block;
+    margin: 0 auto;
+}
+
 /* login-page */
 .login-page-bg {
     background: #EE7800;
