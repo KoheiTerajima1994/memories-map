@@ -156,13 +156,14 @@ const MapComponent = () => {
 
   // とりあえずテキストをFirebaseに登録してみる
   const [textArea, setTextArea] = useState<string>("");
+  const [dateAndTime, setDateAndTime] = useState<any>("");
   const registerText = () => {
     // Firebaseのデータベースにデータを追加する
     // addDocはドキュメントの作成、setDocはドキュメントの作成と更新
     const addDataRef = collection(db, "test-text");
     addDoc(addDataRef, {
       text: textArea,
-      hoge: "他にもいろんなこと",
+      dateAndTime: dateAndTime,
     });
     setTextArea("");
   }
@@ -226,7 +227,7 @@ const MapComponent = () => {
               <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
                   <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
-                  <input type="datetime-local" id="date-and-time" />
+                  <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
               </div>
               <div className="input-wrapper">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。</label>
