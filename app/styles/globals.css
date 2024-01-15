@@ -137,6 +137,13 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+}
+.top-under-menu.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 .register-photo {
     padding: 2%;
@@ -145,6 +152,32 @@ a {
     color: #333;
     display: block;
     margin: 0 auto;
+}
+
+/* img-uploader-modal */
+.img-uploader-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80vh;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    pointer-events: none;
+}
+.img-uploader-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.stop-posting {
+    background: #0080DE;
+    padding: 2%;
+    display: block;
 }
 
 /* login-page */

@@ -101,6 +101,15 @@ const MapComponent = () => {
       });
   }, []);
 
+  // 画像アップローダーモーダルの表示/非表示
+  const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
+  const openImgUploader = () => {
+    setIsImgUploaderActive(true);
+  }
+  const closeImgUploader = () => {
+    setIsImgUploaderActive(false);
+  }
+
   return (
         <>
           <div className="search-bar-position">
@@ -149,9 +158,30 @@ const MapComponent = () => {
           </div>
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
-            <div className="register-photo">
+            <div className="register-photo" onClick={openImgUploader}>
               <AddAPhotoIcon />
               <p>地図に写真を追加する</p>
+            </div>
+          </div>
+          {/* ピンを追加 */}
+          <div className={`grey-filter ${isImgUploaderActive ? 'active' : ''}`} onClick={closeImgUploader}></div>
+          <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
+            {/* コメント、撮影日時、画像 */}
+            <div>
+              <div className="input-wrapper">
+                  <label htmlFor="date-and-time">撮影日時</label>
+                  <input type="datetime-local" id="date-and-time" />
+              </div>
+              <div className="input-wrapper">
+                  <label htmlFor="img-fileup">画像投稿</label>
+                  <input type="file" id="img-fileup" />
+              </div>
+              <div className="input-wrapper">
+                  <label htmlFor="comment">コメント</label>
+                  <textarea id="comment" />
+              </div>
+              <a href="" className="stop-posting">投稿する</a>
+              <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>
         </>
