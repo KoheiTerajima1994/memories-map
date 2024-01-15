@@ -9,7 +9,8 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Link from 'next/link';
 import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, storage } from './firebase';
+import { auth, db, storage } from './firebase';
+import { addDoc, collection } from 'firebase/firestore';
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
@@ -153,6 +154,19 @@ const MapComponent = () => {
 //     console.log(result);
 //   }
 
+  // とりあえずテキストをFirebaseに登録してみる
+  const [textArea, setTextArea] = useState<string>("");
+  const registerText = () => {
+    // Firebaseのデータベースにデータを追加する
+    // addDocはドキュメントの作成、setDocはドキュメントの作成と更新
+    const addDataRef = collection(db, "test-text");
+    addDoc(addDataRef, {
+      text: textArea,
+      hoge: "他にもいろんなこと",
+    });
+    setTextArea("");
+  }
+
   return (
         <>
           <div className="search-bar-position">
@@ -208,7 +222,7 @@ const MapComponent = () => {
           </div>
           {/* ピンを追加 */}
           <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
-            <div>
+            <div className="img-uploader-modal-inner">
               <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
                   <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
@@ -220,9 +234,9 @@ const MapComponent = () => {
               </div>
               <div className="input-wrapper">
                   <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
-                  <textarea id="comment" />
+                  <textarea id="comment" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
-              <div className="stop-posting">投稿する</div>
+              <div className="stop-posting" onClick={registerText}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>

@@ -161,7 +161,7 @@ a {
     left: 50%;
     transform: translateX(-50%);
     width: 100vw;
-    height: 30vh;
+    height: 40vh;
     background: #fff;
     display: flex;
     align-items: center;
@@ -169,6 +169,9 @@ a {
     z-index: 10001;
     opacity: 0;
     pointer-events: none;
+}
+.img-uploader-modal-inner {
+    width: 80%;
 }
 .img-uploader-modal.active {
     opacity: 1;
