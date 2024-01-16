@@ -12,8 +12,8 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db, storage } from './firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 
 const MapComponent = () => {
 
@@ -31,8 +31,6 @@ const MapComponent = () => {
     lat: 35.68134074965259,
     lng: 139.76719989855425,
   });
-  // const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
-
 
   // マップサイズ
   const mapContainerStyle = {
@@ -50,16 +48,7 @@ const MapComponent = () => {
 
     setLatLng(clickedLatLng);
   }
-  // const handleMapClick = (event: google.maps.MapMouseEvent) => {
-  //   // クリックした場所の緯度経度情報
-  //   const clickedLatLng = {
-  //     lat: event.latLng.lat(),
-  //     lng: event.latLng.lng(),
-  //   };
 
-  //   // 新しいピンを追加
-  //   setMarkers((prevMarkers) => [...prevMarkers, clickedLatLng]);
-  // };
   // マーカーポイントの型定義
   type MarkerPoint = {
     lat: number,
@@ -125,46 +114,6 @@ const MapComponent = () => {
     setIsImgUploaderActive(false);
   }
 
-  // 画像アップローダー
-
-//   const postImage = async(image=null) => {
-//     let uploadResult = '';
- 
-//     if(image.name){
-//         const storageRef = ref(storage);
-//         const ext = image.name.split('.').pop();
-//         const hashName = Math.random().toString(36).slice(-8);
-//         const fullPath = '/images/' + hashName + '.' + ext;
-//         const uploadRef = ref(storageRef, fullPath);
- 
-//         // 'file' comes from the Blob or File API
-//         await uploadBytes(uploadRef, image).then(async function(result) {
-//             console.log(result);
-//             console.log('Uploaded a blob or file!');
- 
-//             await getDownloadURL(uploadRef).then(function(url){
-//                 uploadResult = url;
-//             });
-//         });
-//     }
-//     return uploadResult;
-// }
-//   const [image, setImage] = useState(null);
-//   const [createObjectURL, setCreateObjectURL] = useState(null);
-
-//   const uploadToClient = (event: any) => {
-//     if(event.target.files && event.target.files[0]) {
-//       const file = event.target.files[0];
-
-//       setImage(file);
-//       setCreateObjectURL(URL.createObjectURL(file));
-//     }
-//   }
-
-//   const uploadToServer = async () => {
-//     const result = await postImage(image);
-//     console.log(result);
-//   }
 
 // 動くのは、registerLocationがクリックされてからでいいのでは？
 // uploadImageの部分をuseStateを用いる？
@@ -179,7 +128,8 @@ const MapComponent = () => {
   const onFileUploadToFirebase = (e: any) => {
     console.log(e.target.files[0].name);
     const file = e.target.files[0];
-    const storageRef = ref(storage, "image/" + file.name);
+    // ここで、パスに何かしらのIDをつける？
+    const storageRef = ref(storage, "image/" + uuidv4() + file.name);
     const uploadImage = uploadBytesResumable(storageRef, file);
     // 状態表示
     uploadImage.on("state_changed", (snapshot) => {
@@ -203,11 +153,17 @@ const MapComponent = () => {
     // addDocはドキュメントの作成、setDocはドキュメントの作成と更新
     const addDataRef = collection(db, "posting-location");
     addDoc(addDataRef, {
+      id: uuidv4(),
       text: textArea,
       dateAndTime: dateAndTime,
       latLng: latLng,
     });
     setTextArea("");
+  }
+
+  const upLoadFirebaseAndStorage = async () => {
+    await onFileUploadToFirebase();
+    registerLocation();
   }
 
   return (
@@ -231,7 +187,6 @@ const MapComponent = () => {
           <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              // center={center}
               center={markerPoint}
               zoom={15}
               onClick={handleMapClick}
@@ -239,11 +194,6 @@ const MapComponent = () => {
             >
               <Marker position={markerPoint} />
               <Marker position={latLng} />
-              {/* <Marker position={center} /> */}
-              {/* ピンを表示 */}
-              {/* {markers.map((marker, index) => (
-                <Marker key={index} position={marker} />
-              ))} */}
             </GoogleMap>
           </LoadScript>
           <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>
@@ -281,13 +231,14 @@ const MapComponent = () => {
               </div>
               <div className="input-wrapper">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
-                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={onFileUploadToFirebase} />
+                  {/* <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={onFileUploadToFirebase} /> */}
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" />
               </div>
               <div className="input-wrapper">
                   <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
                   <textarea id="comment" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
-              <div className="stop-posting" onClick={registerLocation}>投稿する</div>
+              <div className="stop-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>
