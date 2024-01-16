@@ -33,11 +33,6 @@ const MapComponent = () => {
   });
   // const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
 
-  // 仮の緯度経度でやってみる！！！！！！！！！！！
-  const testLatLng = {
-    lat: 35.68171714836114,
-    lng: 139.76893379020808,
-  }
 
   // マップサイズ
   const mapContainerStyle = {
@@ -45,6 +40,16 @@ const MapComponent = () => {
   width: '100vw',
   };
 
+  const [latLng, setLatLng] = useState<{lat: number, lng: number} | null>(null);
+  const handleMapClick = (e: google.maps.MapMouseEvent) => {
+    const clickedLatLng = {
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng(),
+    };
+    console.log(clickedLatLng);
+
+    setLatLng(clickedLatLng);
+  }
   // const handleMapClick = (event: google.maps.MapMouseEvent) => {
   //   // クリックした場所の緯度経度情報
   //   const clickedLatLng = {
@@ -200,6 +205,7 @@ const MapComponent = () => {
     addDoc(addDataRef, {
       text: textArea,
       dateAndTime: dateAndTime,
+      latLng: latLng,
     });
     setTextArea("");
   }
@@ -228,11 +234,11 @@ const MapComponent = () => {
               // center={center}
               center={markerPoint}
               zoom={15}
-              // onClick={handleMapClick}
+              onClick={handleMapClick}
               onLoad={onMapLoad}
             >
               <Marker position={markerPoint} />
-              <Marker position={testLatLng} />
+              <Marker position={latLng} />
               {/* <Marker position={center} /> */}
               {/* ピンを表示 */}
               {/* {markers.map((marker, index) => (
