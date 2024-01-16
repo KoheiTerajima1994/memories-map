@@ -11,6 +11,7 @@ import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db, storage } from './firebase';
 import { addDoc, collection } from 'firebase/firestore';
+import { ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
@@ -31,6 +32,12 @@ const MapComponent = () => {
     lng: 139.76719989855425,
   });
   // const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
+
+  // 仮の緯度経度でやってみる！！！！！！！！！！！
+  const testLatLng = {
+    lat: 35.68171714836114,
+    lng: 139.76893379020808,
+  }
 
   // マップサイズ
   const mapContainerStyle = {
@@ -154,13 +161,42 @@ const MapComponent = () => {
 //     console.log(result);
 //   }
 
-  // とりあえずテキストをFirebaseに登録してみる
+// 動くのは、registerLocationがクリックされてからでいいのでは？
+// uploadImageの部分をuseStateを用いる？
+  // 画像、音声、動画にはStorageを用いる
+  // ローディング文言表示用
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isUploaded, setIsUploaded] = useState<boolean>(false);
+
+  // 画像アップのタイミング
+  // const [uploadTiming, setUploadTiming] = useState<boolean>(false);
+
+  const onFileUploadToFirebase = (e: any) => {
+    console.log(e.target.files[0].name);
+    const file = e.target.files[0];
+    const storageRef = ref(storage, "image/" + file.name);
+    const uploadImage = uploadBytesResumable(storageRef, file);
+    // 状態表示
+    uploadImage.on("state_changed", (snapshot) => {
+      setLoading(true);
+      },
+      (err) => {
+        console.log(err);
+      },
+      () => {
+        setLoading(false);
+        setIsUploaded(true);
+      }
+    );
+  }
+
+  // Firebaseに投稿場所を登録
   const [textArea, setTextArea] = useState<string>("");
   const [dateAndTime, setDateAndTime] = useState<any>("");
-  const registerText = () => {
+  const registerLocation = () => {
     // Firebaseのデータベースにデータを追加する
     // addDocはドキュメントの作成、setDocはドキュメントの作成と更新
-    const addDataRef = collection(db, "test-text");
+    const addDataRef = collection(db, "posting-location");
     addDoc(addDataRef, {
       text: textArea,
       dateAndTime: dateAndTime,
@@ -186,7 +222,7 @@ const MapComponent = () => {
               <SearchIcon></SearchIcon>
             </div>
           </div>
-          <LoadScript googleMapsApiKey = {process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY}>
+          <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               // center={center}
@@ -196,6 +232,7 @@ const MapComponent = () => {
               onLoad={onMapLoad}
             >
               <Marker position={markerPoint} />
+              <Marker position={testLatLng} />
               {/* <Marker position={center} /> */}
               {/* ピンを表示 */}
               {/* {markers.map((marker, index) => (
@@ -224,20 +261,27 @@ const MapComponent = () => {
           {/* ピンを追加 */}
           <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
+              {loading ? (
+              <p>アップロード中…</p>
+              ) : (
+              isUploaded ? (
+              <p>アップロード完了</p>
+              ) : null
+              )}
               <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
                   <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
                   <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
               </div>
               <div className="input-wrapper">
-                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。</label>
-                  <input type="file" id="img-fileup" />
+                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={onFileUploadToFirebase} />
               </div>
               <div className="input-wrapper">
                   <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
                   <textarea id="comment" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
-              <div className="stop-posting" onClick={registerText}>投稿する</div>
+              <div className="stop-posting" onClick={registerLocation}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>
