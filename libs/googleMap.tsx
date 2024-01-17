@@ -10,10 +10,9 @@ import Link from 'next/link';
 import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db, storage } from './firebase';
-import { addDoc, collection } from 'firebase/firestore';
-import { ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const MapComponent = () => {
 
@@ -190,6 +189,32 @@ const MapComponent = () => {
     console.log('true!!');
   },[]);
 
+  // Firebaseに登録した場所をインポートしたい
+
+  const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[]>([]);
+  // firebaseに登録したものを全て取得する
+  useEffect(() => {
+    const postingLocationRead = async () => {
+      // 複数取得する場合は、collectionとgetDocsを使用後、forEachにてループを回す
+      const collectionRef = collection(db, 'posting-location');
+      const querySnapshot = await getDocs(collectionRef);
+
+      const locations: { containerPostingLat: number; containerPostingLng: number }[] = [];
+
+      querySnapshot.forEach((doc) => {
+        console.log(doc.data().latLng.lat);
+        console.log(doc.data().latLng.lng);
+        const containerPostingLat = doc.data().latLng.lat;
+        const containerPostingLng = doc.data().latLng.lng;
+        locations.push({ containerPostingLat, containerPostingLng });
+      });
+      // ここから、実際のピン立て
+      setPostingLatLng(locations);
+    }
+
+    postingLocationRead();
+  },[]);
+
   return (
         <>
           <div className="search-bar-position">
@@ -219,6 +244,9 @@ const MapComponent = () => {
               >
                 <Marker position={markerPoint} />
                 <Marker position={latLng} />
+                {postingLatLng !== null && postingLatLng.map((location, index) => (
+                  <Marker key={index} position={location} />
+                ))}
               </GoogleMap>
             </LoadScript>
           ):(
