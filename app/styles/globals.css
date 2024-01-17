@@ -139,17 +139,20 @@ a {
     align-items: center;
     opacity: 0;
     pointer-events: none;
-    cursor: pointer;
+    padding: 1% 0;
 }
 .top-under-menu.active {
     opacity: 1;
     pointer-events: auto;
 }
 .register-photo {
-    padding: 2%;
+    padding: 1%;
+    cursor: pointer;
+    background: #EE7800;
+    border-radius: 10px;
+    color: #fff;
 }
 .register-photo .MuiSvgIcon-root {
-    color: #333;
     display: block;
     margin: 0 auto;
 }
@@ -177,13 +180,34 @@ a {
     opacity: 1;
     pointer-events: auto;
 }
-.stop-posting {
-    background: #0080DE;
-    padding: 2%;
+.go-posting {
+    background: #EE7800;
+    width: 10%;
+    padding: 0.5%;
+    margin: 0 auto;
     display: block;
+    text-align: center;
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.stop-posting {
+    width: 10%;
+    margin: 1% auto 0;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
 }
 .img-uploader-input-area {
     display: flex;
+}
+.img-uploader-title {
+    font-size: 2rem;
+    text-align: center;
+    margin: 1% 0;
+}
+.upload-status {
+    text-align: center;
 }
 
 /* login-page */

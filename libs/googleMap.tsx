@@ -93,14 +93,23 @@ const MapComponent = () => {
     }
   }
 
-  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuを表示
+  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
   const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [name, setName] = useState<string>("");
+
+  // アカウント名の取得
+  const accountNameAcquisition = () => {
+    const accountName: any = auth.currentUser;
+    setName(accountName.displayName)
+  }
+
   useEffect(() => {
       onAuthStateChanged(auth, (currentUser) => {
           if(currentUser) {
               setUser(currentUser);
               setIsUnderMenuActive(true);
+              accountNameAcquisition();
           }
       });
   }, []);
@@ -114,9 +123,6 @@ const MapComponent = () => {
     setIsImgUploaderActive(false);
   }
 
-
-// 動くのは、registerLocationがクリックされてからでいいのでは？
-// uploadImageの部分をuseStateを用いる？
   // 画像、音声、動画にはStorageを用いる
   // ローディング文言表示用
   const [loading, setLoading] = useState<boolean>(false);
@@ -136,7 +142,7 @@ const MapComponent = () => {
 
   const onFileUploadToFirebase = (uniqueId: string) => {
     console.log(imgPath);
-    // ここで、パスに何かしらのIDをつける？
+    // パスにuniqueIdを付与
     const storageRef = ref(storage, "image/" + uniqueId + "/" + imgPath.name);
     const uploadImage = uploadBytesResumable(storageRef, imgPath);
     // 状態表示
@@ -152,25 +158,6 @@ const MapComponent = () => {
       }
     );
   }
-  // const onFileUploadToFirebase = (e: any) => {
-  //   console.log(e.target.files[0].name);
-  //   const file = e.target.files[0];
-  //   // ここで、パスに何かしらのIDをつける？
-  //   const storageRef = ref(storage, "image/" + uuidv4() + file.name);
-  //   const uploadImage = uploadBytesResumable(storageRef, file);
-  //   // 状態表示
-  //   uploadImage.on("state_changed", (snapshot) => {
-  //     setLoading(true);
-  //     },
-  //     (err) => {
-  //       console.log(err);
-  //     },
-  //     () => {
-  //       setLoading(false);
-  //       setIsUploaded(true);
-  //     }
-  //   );
-  // }
 
   // Firebaseに投稿場所を登録
   const [textArea, setTextArea] = useState<string>("");
@@ -181,6 +168,7 @@ const MapComponent = () => {
     const addDataRef = collection(db, "posting-location");
     addDoc(addDataRef, {
       id: uniqueId,
+      name: name,
       text: textArea,
       dateAndTime: dateAndTime,
       latLng: latLng,
@@ -191,9 +179,16 @@ const MapComponent = () => {
   const upLoadFirebaseAndStorage = async () => {
     // Firestore DatabaseとStorage間で同じuuidを使用するために定義
     const uniqueId = uuidv4();
-    await onFileUploadToFirebase(uniqueId);
+    onFileUploadToFirebase(uniqueId);
     registerLocation(uniqueId);
   }
+
+  // google mapを一度のみ読み込みたい。。。。！！！
+  const [load, setLoad] = useState<boolean>(false);
+  useEffect(() => {
+    setLoad(true);
+    console.log('true!!');
+  },[]);
 
   return (
         <>
@@ -213,21 +208,26 @@ const MapComponent = () => {
               <SearchIcon></SearchIcon>
             </div>
           </div>
-          <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={markerPoint}
-              zoom={15}
-              onClick={handleMapClick}
-              onLoad={onMapLoad}
-            >
-              <Marker position={markerPoint} />
-              <Marker position={latLng} />
-            </GoogleMap>
-          </LoadScript>
+          {load ? (
+            <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={markerPoint}
+                zoom={15}
+                onClick={handleMapClick}
+                onLoad={onMapLoad}
+              >
+                <Marker position={markerPoint} />
+                <Marker position={latLng} />
+              </GoogleMap>
+            </LoadScript>
+          ):(
+            <p>エラーです。</p>
+          )}
           <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>
             <CloseIcon onClick={closeMenu} className="close-btn"></CloseIcon>
             <div className="menu-bar-contents">
+              <p>{name}さん、こんにちは！</p>
               <p>みんなの思い出MAP</p>
               <p>このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
               <Link href="/login">ログイン</Link>
@@ -247,12 +247,13 @@ const MapComponent = () => {
           <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
               {loading ? (
-              <p>アップロード中…</p>
+              <p className="upload-status">アップロード中…</p>
               ) : (
               isUploaded ? (
-              <p>アップロード完了</p>
+              <p className="upload-status">アップロード完了</p>
               ) : null
               )}
+              <p className="img-uploader-title">画像を投稿する</p>
               <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
                   <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
@@ -260,14 +261,13 @@ const MapComponent = () => {
               </div>
               <div className="input-wrapper">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
-                  {/* <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={onFileUploadToFirebase} /> */}
                   <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
               </div>
               <div className="input-wrapper">
                   <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
                   <textarea id="comment" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
-              <div className="stop-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
+              <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
           </div>

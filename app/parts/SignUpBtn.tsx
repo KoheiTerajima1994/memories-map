@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, MouseEvent, useEffect } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, User } from "firebase/auth";
 import { auth } from "@/libs/firebase";
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
 
 export default function SignUpBtn() {
-    // Email,Password入力用
+    // Email,Password,Name入力用
     const [registerEmail, setRegisterEmail] = useState<string>("");
     const [registerPassword, setRegisterPassword] = useState<string>("");
+    const [registerAccountName, setRegisterAccountName] = useState<string>("");
 
     const router = useRouter();
 
@@ -20,11 +21,14 @@ export default function SignUpBtn() {
         e.preventDefault();
         try {
             // Email,Password登録
-            await createUserWithEmailAndPassword(
+            const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 registerEmail,
                 registerPassword
             );
+            await updateProfile(userCredential.user, {
+                displayName: registerAccountName,
+            });
             router.push("/");
         } catch (error) {
             if(error instanceof FirebaseError) {
@@ -54,6 +58,10 @@ export default function SignUpBtn() {
             <div className="input-wrapper">
                 <label htmlFor="pass">パスワード</label>
                 <input type="text" id="pass" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} />
+            </div>
+            <div className="input-wrapper">
+                <label htmlFor="name">アカウント名</label>
+                <input type="text" id="name" value={registerAccountName} onChange={(e) => setRegisterAccountName(e.target.value)} />
             </div>
             <div className="login-btn-wrapper">
                 <a href="" className="login-btn" onClick={handleClickSignUp}>会員登録</a>
