@@ -125,12 +125,20 @@ const MapComponent = () => {
   // 画像アップのタイミング
   // const [uploadTiming, setUploadTiming] = useState<boolean>(false);
 
-  const onFileUploadToFirebase = (e: any) => {
+  // 画像パスをhandleImgSelectからonFileUploadToFirebaseに渡す用
+  const [imgPath, setImgPath] = useState<any>('');
+
+  const handleImgSelect = (e: any) => {
     console.log(e.target.files[0].name);
     const file = e.target.files[0];
+    setImgPath(file);
+  }
+
+  const onFileUploadToFirebase = (uniqueId: string) => {
+    console.log(imgPath);
     // ここで、パスに何かしらのIDをつける？
-    const storageRef = ref(storage, "image/" + uuidv4() + file.name);
-    const uploadImage = uploadBytesResumable(storageRef, file);
+    const storageRef = ref(storage, "image/" + uniqueId + "/" + imgPath.name);
+    const uploadImage = uploadBytesResumable(storageRef, imgPath);
     // 状態表示
     uploadImage.on("state_changed", (snapshot) => {
       setLoading(true);
@@ -144,16 +152,35 @@ const MapComponent = () => {
       }
     );
   }
+  // const onFileUploadToFirebase = (e: any) => {
+  //   console.log(e.target.files[0].name);
+  //   const file = e.target.files[0];
+  //   // ここで、パスに何かしらのIDをつける？
+  //   const storageRef = ref(storage, "image/" + uuidv4() + file.name);
+  //   const uploadImage = uploadBytesResumable(storageRef, file);
+  //   // 状態表示
+  //   uploadImage.on("state_changed", (snapshot) => {
+  //     setLoading(true);
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     },
+  //     () => {
+  //       setLoading(false);
+  //       setIsUploaded(true);
+  //     }
+  //   );
+  // }
 
   // Firebaseに投稿場所を登録
   const [textArea, setTextArea] = useState<string>("");
   const [dateAndTime, setDateAndTime] = useState<any>("");
-  const registerLocation = () => {
+  const registerLocation = (uniqueId: string) => {
     // Firebaseのデータベースにデータを追加する
     // addDocはドキュメントの作成、setDocはドキュメントの作成と更新
     const addDataRef = collection(db, "posting-location");
     addDoc(addDataRef, {
-      id: uuidv4(),
+      id: uniqueId,
       text: textArea,
       dateAndTime: dateAndTime,
       latLng: latLng,
@@ -162,8 +189,10 @@ const MapComponent = () => {
   }
 
   const upLoadFirebaseAndStorage = async () => {
-    await onFileUploadToFirebase();
-    registerLocation();
+    // Firestore DatabaseとStorage間で同じuuidを使用するために定義
+    const uniqueId = uuidv4();
+    await onFileUploadToFirebase(uniqueId);
+    registerLocation(uniqueId);
   }
 
   return (
@@ -232,7 +261,7 @@ const MapComponent = () => {
               <div className="input-wrapper">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
                   {/* <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={onFileUploadToFirebase} /> */}
-                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" />
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
               </div>
               <div className="input-wrapper">
                   <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
