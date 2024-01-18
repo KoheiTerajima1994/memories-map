@@ -190,8 +190,7 @@ const MapComponent = () => {
   },[]);
 
   // Firebaseに登録した場所をインポートしたい
-
-  const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[]>([]);
+  const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number} | null>(null);
   // firebaseに登録したものを全て取得する
   useEffect(() => {
     const postingLocationRead = async () => {
@@ -206,7 +205,8 @@ const MapComponent = () => {
         console.log(doc.data().latLng.lng);
         const containerPostingLat = doc.data().latLng.lat;
         const containerPostingLng = doc.data().latLng.lng;
-        locations.push({ containerPostingLat, containerPostingLng });
+        locations.push({ lat: containerPostingLat, lng: containerPostingLng });
+        console.log(locations);
       });
       // ここから、実際のピン立て
       setPostingLatLng(locations);
