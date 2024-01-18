@@ -11,7 +11,10 @@
 
 1/18マスト内容！！！！
 登録されたピンを表示させる！！！
-→ピンは立てられた…！エラーは消えないが…
+→登録されたピンを表示できた…！エラーは消えないが…
+→その前に地図に写真を投稿するを押してから、マーカーを有効にしないと、ピンのモーダルクリックを動作がかぶる…
+openImgUploaderの中でuseStateをtrueにする、handleMapClickがMAPの処理
+
 Wantedly文章を見直し、ポートフォリオについてもっと書く
 
 https://qiita.com/soarflat/items/b9d3d17b8ab1f5dbfed2
