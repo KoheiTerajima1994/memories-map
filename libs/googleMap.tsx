@@ -44,10 +44,11 @@ const MapComponent = () => {
 
   const handleMapClick = (e: google.maps.MapMouseEvent) => {
     if(mapClickOparationEnabled) {
-      const clickedLatLng = {
+      // e.latLngがある場合の処理
+      const clickedLatLng = e.latLng ? {
         lat: e.latLng.lat(),
         lng: e.latLng.lng(),
-      };
+      } : null;
       console.log(clickedLatLng);
       setLatLng(clickedLatLng);
     } else {
@@ -199,8 +200,8 @@ const MapComponent = () => {
   },[]);
 
   // Firebaseに登録した場所をインポートしたい
-  const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number} | null>(null);
-  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number} | null>(null)
+  const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
+  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number}[] | null>(null)
   // firebaseに登録したものを全て取得する
   useEffect(() => {
     const postingLocationRead = async () => {
@@ -208,15 +209,15 @@ const MapComponent = () => {
       const collectionRef = collection(db, 'posting-location');
       const querySnapshot = await getDocs(collectionRef);
 
-      // オブジェクトを格納する配列
-      const locations: { containerPostingLat: number; containerPostingLng: number }[] = [];
+      // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
+      const locations: { lat: number; lng: number }[] = [];
       const userInformation: {
-        containerPostingDateAndTime: string;
-        containerPostingName: string;
-        containerPostingText: string;
-        containerPostingId: string;
-        containerPostingLat: number;
-        containerPostingLng: number;
+        dateAndTime: string;
+        name: string;
+        text: string;
+        id: string;
+        lat: number;
+        lng: number;
       }[] = [];
 
       querySnapshot.forEach((doc) => {
@@ -257,8 +258,8 @@ const MapComponent = () => {
 
   // Firebaseから引っ張ってきたマーカーをクリックした時の処理
   const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
-  const [memoLat, setMemoLat] = useState<number>();
-  const [memoLng, setMemoLng] = useState<number>();
+  const [memoLat, setMemoLat] = useState<number>(0);
+  const [memoLng, setMemoLng] = useState<number>(0);
   const openPostModal = (e: google.maps.MapMouseEvent) => {
     console.log('マーカーがクリックされました。');
     setIsOpenPostModal(true);
