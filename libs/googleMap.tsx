@@ -11,7 +11,7 @@ import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db, storage } from './firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { ref, uploadBytesResumable } from 'firebase/storage';
+import { connectStorageEmulator, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 const MapComponent = () => {
@@ -200,7 +200,7 @@ const MapComponent = () => {
 
   // Firebaseに登録した場所をインポートしたい
   const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number} | null>(null);
-  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: string, lng: string} | null>(null)
+  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number} | null>(null)
   // firebaseに登録したものを全て取得する
   useEffect(() => {
     const postingLocationRead = async () => {
@@ -215,8 +215,8 @@ const MapComponent = () => {
         containerPostingName: string;
         containerPostingText: string;
         containerPostingId: string;
-        containerPostingLat: string;
-        containerPostingLng: string;
+        containerPostingLat: number;
+        containerPostingLng: number;
       }[] = [];
 
       querySnapshot.forEach((doc) => {
@@ -229,16 +229,16 @@ const MapComponent = () => {
         // console.log(doc.data().id);
 
         // lat,lngを配列の末尾に追加していく処理
-        const containerPostingLat = doc.data().latLng.lat;
-        const containerPostingLng = doc.data().latLng.lng;
+        const containerPostingLat: number = doc.data().latLng.lat;
+        const containerPostingLng: number = doc.data().latLng.lng;
         locations.push({ lat: containerPostingLat, lng: containerPostingLng });
         // console.log(locations);
 
         // 投稿時間、アカウント名、テキスト、idを配列の末尾に追加していく処理
-        const containerPostingDateAndTime = doc.data().dateAndTime;
-        const containerPostingName = doc.data().name;
-        const containerPostingText = doc.data().text;
-        const containerPostingId = doc.data().id;
+        const containerPostingDateAndTime: string = doc.data().dateAndTime;
+        const containerPostingName: string = doc.data().name;
+        const containerPostingText: string = doc.data().text;
+        const containerPostingId: string = doc.data().id;
         userInformation.push({
           dateAndTime: containerPostingDateAndTime,
           name: containerPostingName,
@@ -257,11 +257,25 @@ const MapComponent = () => {
 
   // Firebaseから引っ張ってきたマーカーをクリックした時の処理
   const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
-  const openPostModal = () => {
+  const [memoLat, setMemoLat] = useState<number>();
+  const [memoLng, setMemoLng] = useState<number>();
+  const openPostModal = (e: google.maps.MapMouseEvent) => {
     console.log('マーカーがクリックされました。');
     setIsOpenPostModal(true);
-    // クリックした時の処理はできたので、モーダルを開き、マーカー以外の情報を記載させる
+    // クリックした場所の緯度・経度を表示
+    const clickedLatLng = {
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng(),
+    };
+    console.log(clickedLatLng);
+    setMemoLat(e.latLng.lat());
+    setMemoLng(e.latLng.lng());
   }
+  // const openPostModal = () => {
+  //   console.log('マーカーがクリックされました。');
+  //   setIsOpenPostModal(true);
+  //   // クリックした時の処理はできたので、モーダルを開き、マーカー以外の情報を記載させる
+  // }
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
     // aタグ デフォルトの処理を防ぐ
     e.preventDefault();
@@ -272,6 +286,11 @@ const MapComponent = () => {
     console.log('モーダルを閉じるがクリックされました。');
     setIsOpenPostModal(false);
   }
+
+  // Storageにある画像を表示したい→現状、取得できない…非同期で取得しなくてはいけない？
+  // const storage = getStorage();
+  // const pathReference = ref(storage, 'gs://omoide-map.appspot.com/image/2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg');
+  // console.log(pathReference);
 
   return (
         <>
@@ -362,14 +381,20 @@ const MapComponent = () => {
           <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
             <p>これは投稿モーダルです。</p>
             {postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
-              <div key={index}>
-                <p>{userInformation.dateAndTime}</p>
-                <p>{userInformation.name}</p>
-                <p>{userInformation.text}</p>
-                <p>{userInformation.id}</p>
-                <p>{userInformation.lat}</p>
-                <p>{userInformation.lng}</p>
-              </div>
+              // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
+              // {memoLat === userInformation.lat && memoLng === userInformation.lng && (
+                <div key={index}>
+                  {/* <img src={pathReference} alt="" /> */}
+                  <p>{memoLat}</p>
+                  <p>{memoLng}</p>
+                  <p>{userInformation.dateAndTime}</p>
+                  <p>{userInformation.name}</p>
+                  <p>{userInformation.text}</p>
+                  <p>{userInformation.id}</p>
+                  <p>{userInformation.lat}</p>
+                  <p>{userInformation.lng}</p>
+                </div>
+              // )}
             ))}
             <a href="" className="post-modal-close" onClick={closePostModal}>「！！！モーダルを閉じる！！！」</a>
           </div>
