@@ -238,3 +238,28 @@ a {
     color: #fff;
     padding: 2% 3%;
 }
+
+/* post-modal */
+.post-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vh;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10002;
+    opacity: 0;
+    pointer-events: none;
+}
+.post-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.post-modal-close {
+    color: #333;
+}

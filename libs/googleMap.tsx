@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -37,15 +37,22 @@ const MapComponent = () => {
   width: '100vw',
   };
 
-  const [latLng, setLatLng] = useState<{lat: number, lng: number} | null>(null);
-  const handleMapClick = (e: google.maps.MapMouseEvent) => {
-    const clickedLatLng = {
-      lat: e.latLng.lat(),
-      lng: e.latLng.lng(),
-    };
-    console.log(clickedLatLng);
 
-    setLatLng(clickedLatLng);
+  // マップクリックでピン立ての処理(地図に写真を追加するの段階で有効にさせる)
+  const [mapClickOparationEnabled, setMapClickOparationEnabled] = useState<boolean>(false);
+  const [latLng, setLatLng] = useState<{lat: number, lng: number} | null>(null);
+
+  const handleMapClick = (e: google.maps.MapMouseEvent) => {
+    if(mapClickOparationEnabled) {
+      const clickedLatLng = {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng(),
+      };
+      console.log(clickedLatLng);
+      setLatLng(clickedLatLng);
+    } else {
+      console.log('エラーが発生しました。')
+    }
   }
 
   // マーカーポイントの型定義
@@ -116,9 +123,11 @@ const MapComponent = () => {
   // 画像アップローダーモーダルの表示/非表示
   const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
   const openImgUploader = () => {
+    setMapClickOparationEnabled(true);
     setIsImgUploaderActive(true);
   }
   const closeImgUploader = () => {
+    setMapClickOparationEnabled(false);
     setIsImgUploaderActive(false);
   }
 
@@ -191,6 +200,7 @@ const MapComponent = () => {
 
   // Firebaseに登録した場所をインポートしたい
   const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number} | null>(null);
+  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: string, lng: string} | null>(null)
   // firebaseに登録したものを全て取得する
   useEffect(() => {
     const postingLocationRead = async () => {
@@ -198,22 +208,70 @@ const MapComponent = () => {
       const collectionRef = collection(db, 'posting-location');
       const querySnapshot = await getDocs(collectionRef);
 
+      // オブジェクトを格納する配列
       const locations: { containerPostingLat: number; containerPostingLng: number }[] = [];
+      const userInformation: {
+        containerPostingDateAndTime: string;
+        containerPostingName: string;
+        containerPostingText: string;
+        containerPostingId: string;
+        containerPostingLat: string;
+        containerPostingLng: string;
+      }[] = [];
 
       querySnapshot.forEach((doc) => {
-        console.log(doc.data().latLng.lat);
-        console.log(doc.data().latLng.lng);
+        // console.log(doc.data());
+        // console.log(doc.data().latLng.lat);
+        // console.log(doc.data().latLng.lng);
+        // console.log(doc.data().dateAndTime);
+        // console.log(doc.data().name);
+        // console.log(doc.data().text);
+        // console.log(doc.data().id);
+
+        // lat,lngを配列の末尾に追加していく処理
         const containerPostingLat = doc.data().latLng.lat;
         const containerPostingLng = doc.data().latLng.lng;
         locations.push({ lat: containerPostingLat, lng: containerPostingLng });
-        console.log(locations);
+        // console.log(locations);
+
+        // 投稿時間、アカウント名、テキスト、idを配列の末尾に追加していく処理
+        const containerPostingDateAndTime = doc.data().dateAndTime;
+        const containerPostingName = doc.data().name;
+        const containerPostingText = doc.data().text;
+        const containerPostingId = doc.data().id;
+        userInformation.push({
+          dateAndTime: containerPostingDateAndTime,
+          name: containerPostingName,
+          text: containerPostingText,
+          id: containerPostingId,
+          lat: containerPostingLat,
+          lng: containerPostingLng,
+        });
       });
       // ここから、実際のピン立て
       setPostingLatLng(locations);
+      setPostingUserInformation(userInformation);
     }
-
     postingLocationRead();
   },[]);
+
+  // Firebaseから引っ張ってきたマーカーをクリックした時の処理
+  const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
+  const openPostModal = () => {
+    console.log('マーカーがクリックされました。');
+    setIsOpenPostModal(true);
+    // クリックした時の処理はできたので、モーダルを開き、マーカー以外の情報を記載させる
+  }
+  const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
+    // aタグ デフォルトの処理を防ぐ
+    e.preventDefault();
+    console.log('モーダルを閉じるがクリックされました。');
+    setIsOpenPostModal(false);
+  }
+  const closePostModalBygreyFilter = () => {
+    console.log('モーダルを閉じるがクリックされました。');
+    setIsOpenPostModal(false);
+  }
 
   return (
         <>
@@ -245,7 +303,7 @@ const MapComponent = () => {
                 <Marker position={markerPoint} />
                 <Marker position={latLng} />
                 {postingLatLng !== null && postingLatLng.map((location, index) => (
-                  <Marker key={index} position={location} />
+                  <Marker key={index} position={location} onClick={openPostModal} />
                 ))}
               </GoogleMap>
             </LoadScript>
@@ -298,6 +356,22 @@ const MapComponent = () => {
               <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div>
+          </div>
+          {/* 投稿モーダル表示 */}
+          <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
+          <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
+            <p>これは投稿モーダルです。</p>
+            {postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
+              <div key={index}>
+                <p>{userInformation.dateAndTime}</p>
+                <p>{userInformation.name}</p>
+                <p>{userInformation.text}</p>
+                <p>{userInformation.id}</p>
+                <p>{userInformation.lat}</p>
+                <p>{userInformation.lng}</p>
+              </div>
+            ))}
+            <a href="" className="post-modal-close" onClick={closePostModal}>「！！！モーダルを閉じる！！！」</a>
           </div>
         </>
   );
