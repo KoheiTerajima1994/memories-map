@@ -201,7 +201,7 @@ const MapComponent = () => {
 
   // Firebaseに登録した場所をインポートしたい
   const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
-  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number}[] | null>(null)
+  const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number}[] | null>(null);
   // firebaseに登録したものを全て取得する
   useEffect(() => {
     const postingLocationRead = async () => {
@@ -252,31 +252,35 @@ const MapComponent = () => {
       // ここから、実際のピン立て
       setPostingLatLng(locations);
       setPostingUserInformation(userInformation);
+      console.log(userInformation);
     }
     postingLocationRead();
   },[]);
 
   // Firebaseから引っ張ってきたマーカーをクリックした時の処理
   const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
-  const [memoLat, setMemoLat] = useState<number>(0);
-  const [memoLng, setMemoLng] = useState<number>(0);
+  const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
   const openPostModal = (e: google.maps.MapMouseEvent) => {
     console.log('マーカーがクリックされました。');
     setIsOpenPostModal(true);
     // クリックした場所の緯度・経度を表示
-    const clickedLatLng = {
-      lat: e.latLng.lat(),
-      lng: e.latLng.lng(),
-    };
-    console.log(clickedLatLng);
-    setMemoLat(e.latLng.lat());
-    setMemoLng(e.latLng.lng());
+    const clickedLat: number = e.latLng.lat();
+    const clickedLng: number = e.latLng.lng();
+
+    // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
+    const latLngInformation: {
+      lat: number;
+      lng: number;
+    }[] = [];
+
+    latLngInformation.push({
+      lat: clickedLat,
+      lng: clickedLng,
+    });
+    // 取得するのは、配列の0番目
+    setMemoLatLng(latLngInformation[0]);
   }
-  // const openPostModal = () => {
-  //   console.log('マーカーがクリックされました。');
-  //   setIsOpenPostModal(true);
-  //   // クリックした時の処理はできたので、モーダルを開き、マーカー以外の情報を記載させる
-  // }
+
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
     // aタグ デフォルトの処理を防ぐ
     e.preventDefault();
@@ -384,10 +388,8 @@ const MapComponent = () => {
             {postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               // {memoLat === userInformation.lat && memoLng === userInformation.lng && (
+              userInformation.lat === memoLatLng.lat && userInformation.lng === memoLatLng.lng && (
                 <div key={index}>
-                  {/* <img src={pathReference} alt="" /> */}
-                  <p>{memoLat}</p>
-                  <p>{memoLng}</p>
                   <p>{userInformation.dateAndTime}</p>
                   <p>{userInformation.name}</p>
                   <p>{userInformation.text}</p>
@@ -395,7 +397,7 @@ const MapComponent = () => {
                   <p>{userInformation.lat}</p>
                   <p>{userInformation.lng}</p>
                 </div>
-              // )}
+              )
             ))}
             <a href="" className="post-modal-close" onClick={closePostModal}>「！！！モーダルを閉じる！！！」</a>
           </div>
