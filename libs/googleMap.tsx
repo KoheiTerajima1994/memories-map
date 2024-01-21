@@ -9,9 +9,9 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Link from 'next/link';
 import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, db, storage } from './firebase';
+import { app, auth, db, storage } from './firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { connectStorageEmulator, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import { connectStorageEmulator, getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 const MapComponent = () => {
@@ -278,7 +278,8 @@ const MapComponent = () => {
       lng: clickedLng,
     });
     // 取得するのは、配列の0番目
-    setMemoLatLng(latLngInformation[0]);
+    // setMemoLatLng(latLngInformation[0]);
+    setMemoLatLng(latLngInformation);
   }
 
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -296,6 +297,90 @@ const MapComponent = () => {
   // const storage = getStorage();
   // const pathReference = ref(storage, 'gs://omoide-map.appspot.com/image/2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg');
   // console.log(pathReference);
+
+  const storage = getStorage(app);
+  const pathReference = ref(storage, 'image/');
+
+  const [getImg, setGetImg] = useState<string>("");
+
+  // const handleDownloadAll = async () => {
+  //   const directoryRef = ref(storage, 'image/'); // ディレクトリへの参照
+  //   const files = await listAll(directoryRef); // ディレクトリ内のファイル一覧を取得
+  
+  //   const downloadURLs = await Promise.all(files.items.map(async (fileRef) => {
+  //     return await getDownloadURL(fileRef); // 各ファイルに対してダウンロードURLを取得
+  //   }));
+  
+  //   console.log(downloadURLs);
+  // };
+  
+  // useEffect(() => {
+  //   handleDownloadAll();
+  // },[]);
+
+  // const handleDownload = async () => {
+  //   const fileName = "2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg";
+  //   const fileRef = ref(storage, `image/${fileName}`);
+  //   const url = await getDownloadURL(fileRef);
+  //   console.log(url);
+  // }
+
+  // useEffect(() => {
+  //   handleDownload();
+  // },[])
+
+  // useEffect(() => {
+  //   listAll(pathReference)
+  //     .then((res) => {
+  //       res.prefixes.forEach((itemRef) => {
+  //         console.log(itemRef.fullPath);
+  //         setGetImg(itemRef.fullPath);
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.error("画像が取得できません。");
+  //     });
+  // }, []);
+
+  // useEffect(() => {
+  //   listAll(pathReference)
+  //     .then(async (res) => {
+  //       // itemsに対して処理
+  //       await Promise.all(res.items.map(async (itemRef) => {
+  //         const downloadURL = await getDownloadURL(itemRef);
+  //         console.log(downloadURL);
+  //         // ダウンロードURLを利用して必要な処理を行う
+  //         console.log("ダウンロードURLが正常に表示されました。");
+  //       }));
+  //     })
+  //     .catch((error) => {
+  //       console.error("画像が取得できません。", error);
+  //     });
+  // }, []);
+
+  // useEffect(() => {
+  //   listAll(pathReference)
+  //     .then((res) => {
+  //       // res.itemsにはディレクトリ内の各ファイルの参照が含まれています
+  //       const fileRefs = res.items;
+  
+  //       // 各ファイルに対してダウンロードURLを取得
+  //       const downloadURLPromises = fileRefs.map(fileRef => getDownloadURL(fileRef));
+  
+  //       // Promise.allを使用してすべてのダウンロードURLを取得
+  //       Promise.all(downloadURLPromises)
+  //         .then(urls => {
+  //           // urlsには各ファイルのダウンロードURLが配列として含まれています
+  //           setGetImg(urls);
+  //         })
+  //         .catch(error => {
+  //           console.error("ダウンロードURLの取得に失敗しました。", error);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.error("画像一覧の取得に失敗しました。", error);
+  //     });
+  // }, []);
 
   return (
         <>
@@ -385,11 +470,11 @@ const MapComponent = () => {
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
           <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
             <p>これは投稿モーダルです。</p>
-            {postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
+            {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
-              // {memoLat === userInformation.lat && memoLng === userInformation.lng && (
-              userInformation.lat === memoLatLng.lat && userInformation.lng === memoLatLng.lng && (
+              userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
                 <div key={index}>
+                  {/* <img src={getImg} alt="" /> */}
                   <p>{userInformation.dateAndTime}</p>
                   <p>{userInformation.name}</p>
                   <p>{userInformation.text}</p>
