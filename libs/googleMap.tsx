@@ -306,8 +306,10 @@ const MapComponent = () => {
   // const handleDownloadAll = async () => {
   //   const directoryRef = ref(storage, 'image/'); // ディレクトリへの参照
   //   const files = await listAll(directoryRef); // ディレクトリ内のファイル一覧を取得
+  //   console.log(files);
   
   //   const downloadURLs = await Promise.all(files.items.map(async (fileRef) => {
+  //     console.log(fileRef);
   //     return await getDownloadURL(fileRef); // 各ファイルに対してダウンロードURLを取得
   //   }));
   
