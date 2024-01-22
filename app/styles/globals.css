@@ -73,8 +73,11 @@ a {
     margin-top: 14%;
     margin-bottom: 14%;
 }
+.ta-c {
+    text-align: center;
+}
 /* button */
-.blue-btn {
+.menu-bar-blue-btn {
     background: #0080DE;
     padding: 3% 10%;
     text-align: center;
@@ -84,8 +87,9 @@ a {
     border: 2px solid transparent;
     transition: all 0.5s;
     margin: 5% 0;
+    color: #fff;
 }
-.blue-btn:hover {
+.menu-bar-blue-btn:hover {
     background: #fff;
     border: 2px solid #0080DE;
     color: #0080DE;
@@ -100,8 +104,39 @@ a {
     margin: 5% 0;
 }
 .under-line-btn:hover {
-    color: #fff;
     border-bottom: 1px solid #fff;
+}
+.img-uploader-blue-btn {
+    background: #0080DE;
+    padding: 1% 0;
+    text-align: center;
+    font-size: 1.125rem;
+    border-radius: 10px;
+    letter-spacing: 0.2em;
+    border: 2px solid transparent;
+    transition: all 0.5s;
+    margin: 2% 0;
+    color: #fff;
+    width: 30%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.img-uploader-blue-btn:hover {
+    background: #fff;
+    border: 2px solid #0080DE;
+    color: #0080DE;
+}
+.img-uploader-under-line-btn {
+    text-align: center;
+    transition: all 0.5s;
+    font-size: 1.125rem;
+    letter-spacing: 0.2em;
+    width: 30%;
+    margin: 2% auto;
+    cursor: pointer;
+}
+.img-uploader-under-line-btn:hover {
+    opacity: .5;
 }
 
 /* initial-anm */
@@ -349,7 +384,7 @@ a {
     pointer-events: none;
 }
 .img-uploader-modal-inner {
-    width: 80%;
+    width: 50%;
 }
 .img-uploader-modal.active {
     opacity: 1;
@@ -376,11 +411,11 @@ a {
 .img-uploader-input-area {
     display: flex;
 }
-.img-uploader-title {
+/* .img-uploader-title {
     font-size: 2rem;
     text-align: center;
     margin: 1% 0;
-}
+} */
 .upload-status {
     text-align: center;
 }

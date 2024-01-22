@@ -407,6 +407,24 @@ const MapComponent = () => {
     })
   },[]);
 
+  // 画像アップローダーモーダル
+  // const [isImgUploaderModal, setIsImgUploaderModal] = useState<boolean>(false);
+
+  // const nextModal1 = () => {
+  //   setIsImgUploaderModal(true);
+  // }
+  const imgUploaderModals = {
+    PAGE1: "page1",
+    PAGE2: "page2",
+    PAGE3: "page3",
+    PAGE4: "page4",
+  }
+  const [imgUploaderModalName, setImgUploaderModalName] = useState<string | null>(null);
+
+  const handleClickCloseImgUploaderModal = useCallback(() => {
+    setImgUploaderModalName(null);
+  },[])
+
   return (
         <>
           <div className={`initial-anm ${initialAnm ? 'active' : ''}`}>
@@ -464,13 +482,13 @@ const MapComponent = () => {
               <p className="fz-sm lh-sm my-xl">このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
               {name ? (
                 <>
-                  <Link href="/mypage" className="blue-btn">マイページ</Link>
+                  <Link href="/mypage" className="menu-bar-blue-btn">マイページ</Link>
                   <LogoutBtn />
                   <Link href="/howto" className="under-line-btn">使い方</Link>
                 </>
               ) : (
                 <>
-                  <Link href="/login" className="blue-btn">ログイン</Link>
+                  <Link href="/login" className="menu-bar-blue-btn">ログイン</Link>
                   <Link href="/signup" className="under-line-btn">登録はこちら</Link>
                   <Link href="/howto" className="under-line-btn">使い方</Link>
                 </>
@@ -487,6 +505,18 @@ const MapComponent = () => {
           {/* ピンを追加 */}
           <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
+              <div className="img-uploader-blue-btn" onClick={nextModal1}>次へ</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploader}>投稿をやめる</div>
+            </div>
+              {/* <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
+              <div className="img-uploader-blue-btn" onClick={nextModal1}>次へ</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploader}>投稿をやめる</div>
+            </div> */}
+            {/* <div className="img-uploader-modal-inner">
               {loading ? (
               <p className="upload-status">アップロード中…</p>
               ) : (
@@ -494,7 +524,7 @@ const MapComponent = () => {
               <p className="upload-status">アップロード完了</p>
               ) : null
               )}
-              <p className="img-uploader-title">画像を投稿する</p>
+              <p className="img-uploader-title">画像を投稿する(簡単4STEP)</p>
               <p>1.投稿したい位置にピンを刺してください。</p>
               <div className="input-wrapper">
                   <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
@@ -510,7 +540,7 @@ const MapComponent = () => {
               </div>
               <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
-            </div>
+            </div> */}
           </div>
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
