@@ -23,7 +23,7 @@ export default function LogoutBtn() {
     return (
         <>
             <div className="logout-btn-wrapper">
-                <a href="" className="logout-btn" onClick={handleClickLogout}>ログアウト</a>
+                <a href="" className="under-line-btn" onClick={handleClickLogout}>ログアウト</a>
             </div>
         </>
     )

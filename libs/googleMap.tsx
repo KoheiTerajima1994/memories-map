@@ -13,8 +13,15 @@ import { app, auth, db, storage } from './firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { connectStorageEmulator, getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 const MapComponent = () => {
+
+  // 初回読み込み時、表示画面
+  const [initialAnm, setInitialAnm] = useState<boolean>(false);
+  useEffect(() => {
+    setInitialAnm(true);
+  },[]);
 
   // ハンバーガーメニューの開閉
   const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -108,7 +115,7 @@ const MapComponent = () => {
   // アカウント名の取得
   const accountNameAcquisition = () => {
     const accountName: any = auth.currentUser;
-    setName(accountName.displayName)
+    setName(accountName.displayName);
   }
 
   useEffect(() => {
@@ -298,10 +305,10 @@ const MapComponent = () => {
   // const pathReference = ref(storage, 'gs://omoide-map.appspot.com/image/2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg');
   // console.log(pathReference);
 
-  const storage = getStorage(app);
-  const pathReference = ref(storage, 'image/');
+  // const storage = getStorage(app);
+  // const pathReference = ref(storage, 'image/');
 
-  const [getImg, setGetImg] = useState<string>("");
+  // const [getImg, setGetImg] = useState<string>("");
 
   // const handleDownloadAll = async () => {
   //   const directoryRef = ref(storage, 'image/'); // ディレクトリへの参照
@@ -384,8 +391,33 @@ const MapComponent = () => {
   //     });
   // }, []);
 
+  const storage = getStorage(app);
+  const listRef = ref(storage, 'image/');
+
+  console.log(storage);
+
+  useEffect(() => {
+    listAll(listRef)
+    .then((res) => {
+      res.items.forEach((itemRef) => {
+        console.log(itemRef);
+      });
+    }).catch((error) => {
+      console.error(error);
+    })
+  },[]);
+
   return (
         <>
+          <div className={`initial-anm ${initialAnm ? 'active' : ''}`}>
+            <div>
+              <div className="mapIcon">
+                <Image src="/images/map-icon.png" className="swing" alt="Map Icon" width={100} height={100} />
+              </div>
+              <p className="initial-anm-title">みんなの<br/>思い出MAP</p>
+              <p className="initial-anm-subtitle">消えゆく景色を残したい。</p>
+            </div>
+          </div>
           <div className="search-bar-position">
             <div className="search-bar-left" onClick={openMenu}>
               <MenuIcon></MenuIcon>
@@ -424,14 +456,26 @@ const MapComponent = () => {
           <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>
             <CloseIcon onClick={closeMenu} className="close-btn"></CloseIcon>
             <div className="menu-bar-contents">
-              <p>{name}さん、こんにちは！</p>
-              <p>みんなの思い出MAP</p>
-              <p>このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
-              <Link href="/login">ログイン</Link>
-              <Link href="/signup">登録はこちら</Link>
-              <Link href="">使い方</Link>
-              <LogoutBtn />
-            </div>
+              <div className="logoIcon mb-sm">
+                <Image src="/images/logo.png" alt="Logo Icon" width={150} height={150} />
+              </div>
+              {/* ログインされていれば表示 */}
+              {name && <p>{name}さん、こんにちは！</p>}
+              <p className="fz-sm lh-sm my-xl">このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
+              {name ? (
+                <>
+                  <Link href="/mypage" className="blue-btn">マイページ</Link>
+                  <LogoutBtn />
+                  <Link href="/howto" className="under-line-btn">使い方</Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="blue-btn">ログイン</Link>
+                  <Link href="/signup" className="under-line-btn">登録はこちら</Link>
+                  <Link href="/howto" className="under-line-btn">使い方</Link>
+                </>
+              )}
+              </div>
           </div>
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
