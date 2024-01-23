@@ -129,15 +129,15 @@ const MapComponent = () => {
   }, []);
 
   // 画像アップローダーモーダルの表示/非表示
-  // const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
-  // const openImgUploader = () => {
-  //   setMapClickOparationEnabled(true);
-  //   setIsImgUploaderActive(true);
-  // }
-  // const closeImgUploader = () => {
-  //   setMapClickOparationEnabled(false);
-  //   setIsImgUploaderActive(false);
-  // }
+  const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
+  const openImgUploader = () => {
+    setMapClickOparationEnabled(true);
+    setIsImgUploaderActive(true);
+  }
+  const closeImgUploader = () => {
+    setMapClickOparationEnabled(false);
+    setIsImgUploaderActive(false);
+  }
 
   // 画像、音声、動画にはStorageを用いる
   // ローディング文言表示用
@@ -407,23 +407,84 @@ const MapComponent = () => {
   //   })
   // },[]);
 
-  // const storage = getStorage(app);
+  const storage = getStorage(app);
 
-  // useEffect(() => {
-  //   const getImageUrl = async (imageRef) => {
-  //     try {
-  //       const url = await getDownloadURL(imageRef);
-  //       console.log(url);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
+  useEffect(() => {
+    const getImageUrl = async (imageRef) => {
+      try {
+        const url = await getDownloadURL(imageRef);
+        console.log(url);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  //   const imageRef = ref(storage, `image/34241baa-2341-4806-ad0b-ef9135a14142`);
-  //   getImageUrl(imageRef);
-  // }, []);
+    const imageRef = ref(storage, `image/34241baa-2341-4806-ad0b-ef9135a14142`);
+    getImageUrl(imageRef);
+  }, []);
 
   // 画像アップローダーモーダル
+  const [isImgUploaderModal1, setIsImgUploaderModal1] = useState<boolean>(false);
+  const [isImgUploaderModal2, setIsImgUploaderModal2] = useState<boolean>(false);
+  const [isImgUploaderModal3, setIsImgUploaderModal3] = useState<boolean>(false);
+  const [isImgUploaderModal4, setIsImgUploaderModal4] = useState<boolean>(false);
+
+  // 1枚目のモーダルを開く
+  const openImgUploaderModal1 = () => {
+    // 戻る動作の場合、setIsImgUploaderModal2をfalseにする必要あり
+    setIsImgUploaderModal2(false);
+    setIsImgUploaderModal1(true);
+
+    setMapClickOparationEnabled(true);
+  }
+
+  // 2枚目のモーダルを開く&1枚目のモーダルを閉じる
+  const openImgUploaderModal2 = () => {
+    // 1枚目のモーダルを閉じる
+    setIsImgUploaderModal1(false);
+    // 3枚目のモーダルを閉じる
+    setIsImgUploaderModal3(false);
+    // 2枚目のモーダルを開く
+    setIsImgUploaderModal2(true);
+
+    setMapClickOparationEnabled(true);
+  }
+
+  // 3枚目のモーダルを開く&2枚目のモーダルを閉じる
+  const openImgUploaderModal3 = () => {
+    // 2枚目のモーダルを閉じる
+    setIsImgUploaderModal2(false);
+    // 4枚目のモーダルを閉じる
+    setIsImgUploaderModal4(false);
+    // 3枚目のモーダルを開く
+    setIsImgUploaderModal3(true);
+
+    setMapClickOparationEnabled(true);
+  }
+
+  // 4枚目のモーダルを開く&3枚目のモーダルを閉じる
+  const openImgUploaderModal4 = () => {
+    // 3枚目のモーダルを閉じる
+    setIsImgUploaderModal3(false);
+    // 4枚目のモーダルを開く
+    setIsImgUploaderModal4(true);
+
+    // ピン立て有効
+    setMapClickOparationEnabled(true);
+  }
+
+  // モーダル自体を閉じる処理
+  const closeImgUploaderModal = () => {
+    setIsImgUploaderModal1(false);
+    setIsImgUploaderModal2(false);
+    setIsImgUploaderModal3(false);
+    setIsImgUploaderModal4(false);
+
+    // ピン立て無効
+    setMapClickOparationEnabled(false);
+  }
+
+
   // const [isImgUploaderModal, setIsImgUploaderModal] = useState<boolean>(false);
 
   // const nextModal1 = () => {
@@ -431,38 +492,29 @@ const MapComponent = () => {
   // }
 
   // それぞれのモーダルの命名
-  const imgUploaderModalPageName = {
-    PAGE1: "page1",
-    PAGE2: "page2",
-    PAGE3: "page3",
-    PAGE4: "page4"
-  }
-  // モーダル名格納用？
-  const [modalName, setModalName] = useState<string | null>(null);
+  // const MODALS = {
+  //   DEFAULT: "default",
+  //   TEST1: "test1",
+  //   TEST2: "test2"
+  // }
+  // const[modalName, setModalName] = useState(null);
 
-  // モーダルを閉じる処理
-  const handleClickClose = useCallback(() => {
-   setModalName(null);
-   document.removeEventListener('click', handleClickClose);
-   },[]);
+  // const handleClickClose = useCallback(() => {
+  //  setModalName(null);
+  //  document.removeEventListener('click', handleClickClose)
+  //  },[])
 
-  //  無駄にレンダリングしないよう、useEffectにて制御
-   useEffect(()=>{
-       return ()=>{
-           document.removeEventListener('click', handleClickClose)
-       }
-   },[handleClickClose])
+  //  useEffect(()=>{
+  //      return ()=>{
+  //          document.removeEventListener('click', handleClickClose)
+  //      }
+  //  },[handleClickClose])
 
-  //  デフォルトモーダルを開く処理(page1)
-  const handleOpenClick = (event) => {
-      // ページ名をセット
-      setModalName(imgUploaderModalPageName.PAGE1);
-      console.log(imgUploaderModalPageName.PAGE1);
-      // 現在開いているモーダルを閉じる処理
-      document.addEventListener('click', handleClickClose);
-      // クリックされた要素の親要素へ伝播しないように
-      event.stopPropagation();
-   }
+  //  const handleOpenClick = (event) => {
+  //      setModalName(MODALS.DEFAULT);
+  //      document.addEventListener('click',handleClickClose);
+  //      event.stopPropagation();
+  //  }
 
   return (
         <>
@@ -536,42 +588,61 @@ const MapComponent = () => {
           </div>
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
-            <div className="register-photo" onClick={(event)=>{handleOpenClick(event)}}>
+            <div className="register-photo" onClick={openImgUploaderModal1}>
               <AddAPhotoIcon />
               <p>地図に写真を追加する</p>
             </div>
           </div>
           {/* ピンを追加 */}
           {/* <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}> */}
-            {modalName === imgUploaderModalPageName.PAGE1 && (
-            <div className="img-uploader-modal">
-              <div className="img-uploader-modal-inner" onClick={(event)=>{event.stopPropagation()}}>
-                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-                <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
-                <div className="img-uploader-blue-btn" onClick={() => {setModalName("page2")}}>次へ</div>
-                <div className="img-uploader-under-line-btn" onClick={()=>{handleClickClose()}}>投稿をやめる</div>
-              </div>
-            </div>
-            )}
-            {modalName === imgUploaderModalPageName.PAGE2 && (
-              <div className="img-uploader-modal">
-                <div className="img-uploader-modal-inner">
-                  <div className="input-wrapper">
-                    <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
-                    <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
-                  </div>
-                  <div className="img-uploader-blue-btn" onClick={() => {setModalName("page3")}}>次へ</div>
-                  <div className="img-uploader-blue-btn" onClick={() => {setModalName("page1")}}>前へ</div>
-                  <div className="img-uploader-under-line-btn" onClick={()=>{handleClickClose()}}>投稿をやめる</div>
-                </div>
-              </div>
-            )}
-            {/* <div className="img-uploader-modal-inner">
+          {/* 1枚目モーダル */}
+          <div className={`img-uploader-modal ${isImgUploaderModal1 ? 'active' : ''}`}>
+            <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p> */}
-              {/* <div className="img-uploader-blue-btn" onClick={nextModal1}>次へ</div> */ }
-              {/* <div className="img-uploader-under-line-btn" onClick={closeImgUploader}>投稿をやめる</div>
-            </div> */}
+              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal2}>次へ</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+            </div>
+          </div>
+          {/* 2枚目モーダル */}
+          <div className={`img-uploader-modal ${isImgUploaderModal2 ? 'active' : ''}`}>
+            <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <div className="input-wrapper">
+                  <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
+                  <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
+              </div>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal1}>前へ</div>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal3}>次へ</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+            </div>
+          </div>
+          {/* 3枚目モーダル */}
+          <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
+            <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <div className="input-wrapper">
+                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
+              </div>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal2}>前へ</div>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal4}>次へ</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+            </div>
+          </div>
+          {/* 4枚目モーダル */}
+          <div className={`img-uploader-modal ${isImgUploaderModal4 ? 'active' : ''}`}>
+            <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <div className="input-wrapper">
+                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
+              </div>
+              <div className="img-uploader-blue-btn" onClick={openImgUploaderModal3}>前へ</div>
+              <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
+              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+            </div>
+          </div>
               {/* <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
               <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
@@ -603,6 +674,7 @@ const MapComponent = () => {
               <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div> */}
+          {/* </div> */}
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
           <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
