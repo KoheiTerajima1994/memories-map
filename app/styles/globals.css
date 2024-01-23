@@ -380,16 +380,16 @@ a {
     align-items: center;
     justify-content: center;
     z-index: 10001;
-    opacity: 0;
-    pointer-events: none;
+    /* opacity: 0;
+    pointer-events: none; */
 }
 .img-uploader-modal-inner {
     width: 50%;
 }
-.img-uploader-modal.active {
+/* .img-uploader-modal.active {
     opacity: 1;
     pointer-events: auto;
-}
+} */
 .go-posting {
     background: #EE7800;
     width: 10%;

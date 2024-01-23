@@ -11,7 +11,7 @@ import LogoutBtn from '../app/parts/LogoutBtn';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { app, auth, db, storage } from './firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { connectStorageEmulator, getDownloadURL, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
+import { connectStorageEmulator, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
 
@@ -129,15 +129,15 @@ const MapComponent = () => {
   }, []);
 
   // 画像アップローダーモーダルの表示/非表示
-  const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
-  const openImgUploader = () => {
-    setMapClickOparationEnabled(true);
-    setIsImgUploaderActive(true);
-  }
-  const closeImgUploader = () => {
-    setMapClickOparationEnabled(false);
-    setIsImgUploaderActive(false);
-  }
+  // const [isImgUploaderActive, setIsImgUploaderActive] = useState<boolean>(false);
+  // const openImgUploader = () => {
+  //   setMapClickOparationEnabled(true);
+  //   setIsImgUploaderActive(true);
+  // }
+  // const closeImgUploader = () => {
+  //   setMapClickOparationEnabled(false);
+  //   setIsImgUploaderActive(false);
+  // }
 
   // 画像、音声、動画にはStorageを用いる
   // ローディング文言表示用
@@ -391,21 +391,37 @@ const MapComponent = () => {
   //     });
   // }, []);
 
-  const storage = getStorage(app);
-  const listRef = ref(storage, 'image/');
+  // const storage = getStorage(app);
+  // const listRef = ref(storage, 'image/');
 
-  console.log(storage);
+  // console.log(storage);
 
-  useEffect(() => {
-    listAll(listRef)
-    .then((res) => {
-      res.items.forEach((itemRef) => {
-        console.log(itemRef);
-      });
-    }).catch((error) => {
-      console.error(error);
-    })
-  },[]);
+  // useEffect(() => {
+  //   listAll(listRef)
+  //   .then((res) => {
+  //     res.items.forEach((itemRef) => {
+  //       console.log(itemRef);
+  //     });
+  //   }).catch((error) => {
+  //     console.error(error);
+  //   })
+  // },[]);
+
+  // const storage = getStorage(app);
+
+  // useEffect(() => {
+  //   const getImageUrl = async (imageRef) => {
+  //     try {
+  //       const url = await getDownloadURL(imageRef);
+  //       console.log(url);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   const imageRef = ref(storage, `image/34241baa-2341-4806-ad0b-ef9135a14142`);
+  //   getImageUrl(imageRef);
+  // }, []);
 
   // 画像アップローダーモーダル
   // const [isImgUploaderModal, setIsImgUploaderModal] = useState<boolean>(false);
@@ -413,17 +429,40 @@ const MapComponent = () => {
   // const nextModal1 = () => {
   //   setIsImgUploaderModal(true);
   // }
-  const imgUploaderModals = {
+
+  // それぞれのモーダルの命名
+  const imgUploaderModalPageName = {
     PAGE1: "page1",
     PAGE2: "page2",
     PAGE3: "page3",
-    PAGE4: "page4",
+    PAGE4: "page4"
   }
-  const [imgUploaderModalName, setImgUploaderModalName] = useState<string | null>(null);
+  // モーダル名格納用？
+  const [modalName, setModalName] = useState<string | null>(null);
 
-  const handleClickCloseImgUploaderModal = useCallback(() => {
-    setImgUploaderModalName(null);
-  },[])
+  // モーダルを閉じる処理
+  const handleClickClose = useCallback(() => {
+   setModalName(null);
+   document.removeEventListener('click', handleClickClose);
+   },[]);
+
+  //  無駄にレンダリングしないよう、useEffectにて制御
+   useEffect(()=>{
+       return ()=>{
+           document.removeEventListener('click', handleClickClose)
+       }
+   },[handleClickClose])
+
+  //  デフォルトモーダルを開く処理(page1)
+  const handleOpenClick = (event) => {
+      // ページ名をセット
+      setModalName(imgUploaderModalPageName.PAGE1);
+      console.log(imgUploaderModalPageName.PAGE1);
+      // 現在開いているモーダルを閉じる処理
+      document.addEventListener('click', handleClickClose);
+      // クリックされた要素の親要素へ伝播しないように
+      event.stopPropagation();
+   }
 
   return (
         <>
@@ -497,19 +536,42 @@ const MapComponent = () => {
           </div>
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
-            <div className="register-photo" onClick={openImgUploader}>
+            <div className="register-photo" onClick={(event)=>{handleOpenClick(event)}}>
               <AddAPhotoIcon />
               <p>地図に写真を追加する</p>
             </div>
           </div>
           {/* ピンを追加 */}
-          <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}>
-            <div className="img-uploader-modal-inner">
-              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
-              <div className="img-uploader-blue-btn" onClick={nextModal1}>次へ</div>
-              <div className="img-uploader-under-line-btn" onClick={closeImgUploader}>投稿をやめる</div>
+          {/* <div className={`img-uploader-modal ${isImgUploaderActive ? 'active' : ''}`}> */}
+            {modalName === imgUploaderModalPageName.PAGE1 && (
+            <div className="img-uploader-modal">
+              <div className="img-uploader-modal-inner" onClick={(event)=>{event.stopPropagation()}}>
+                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+                <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
+                <div className="img-uploader-blue-btn" onClick={() => {setModalName("page2")}}>次へ</div>
+                <div className="img-uploader-under-line-btn" onClick={()=>{handleClickClose()}}>投稿をやめる</div>
+              </div>
             </div>
+            )}
+            {modalName === imgUploaderModalPageName.PAGE2 && (
+              <div className="img-uploader-modal">
+                <div className="img-uploader-modal-inner">
+                  <div className="input-wrapper">
+                    <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
+                    <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
+                  </div>
+                  <div className="img-uploader-blue-btn" onClick={() => {setModalName("page3")}}>次へ</div>
+                  <div className="img-uploader-blue-btn" onClick={() => {setModalName("page1")}}>前へ</div>
+                  <div className="img-uploader-under-line-btn" onClick={()=>{handleClickClose()}}>投稿をやめる</div>
+                </div>
+              </div>
+            )}
+            {/* <div className="img-uploader-modal-inner">
+              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p> */}
+              {/* <div className="img-uploader-blue-btn" onClick={nextModal1}>次へ</div> */ }
+              {/* <div className="img-uploader-under-line-btn" onClick={closeImgUploader}>投稿をやめる</div>
+            </div> */}
               {/* <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
               <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
@@ -541,7 +603,6 @@ const MapComponent = () => {
               <div className="go-posting" onClick={upLoadFirebaseAndStorage}>投稿する</div>
               <div className="stop-posting" onClick={closeImgUploader}>投稿をやめる</div>
             </div> */}
-          </div>
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
           <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
@@ -557,6 +618,7 @@ const MapComponent = () => {
                   <p>{userInformation.id}</p>
                   <p>{userInformation.lat}</p>
                   <p>{userInformation.lng}</p>
+                  <button onClick={getImages}>Get Images</button>
                 </div>
               )
             ))}
