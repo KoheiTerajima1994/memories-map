@@ -142,11 +142,11 @@ const MapComponent = () => {
   const onFileUploadToFirebase = (uniqueId: string) => {
     console.log(imgPath);
     // パスにuniqueIdを付与
-    const storageRef = ref(storage, "image/" + uniqueId + "/" + imgPath.name);
+    const storageRef = ref(storage, "image/" + uniqueId + imgPath.name);
     const uploadImage = uploadBytesResumable(storageRef, imgPath);
     // 状態表示
     uploadImage.on("state_changed", (snapshot) => {
-      setLoading(true);
+      // setLoading(true);
       alert('アップロード中です。');
       },
       (err) => {
@@ -154,8 +154,8 @@ const MapComponent = () => {
       },
       () => {
         alert('アップロードが完了しました。');
-        setLoading(false);
-        setIsUploaded(true);
+        // setLoading(false);
+        // setIsUploaded(true);
       }
     );
   }
@@ -289,6 +289,20 @@ const MapComponent = () => {
     console.log('モーダルを閉じるがクリックされました。');
     setIsOpenPostModal(false);
   }
+
+  // Storageにある画像全件取得
+  const [imageList, setImageList] = useState([]);
+  const imageListRef = ref(storage, "image/");
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url])
+        })
+      })
+    })
+  },[])
+
 
   // Storageにある画像を表示したい→現状、取得できない…非同期で取得しなくてはいけない？
   // const storage = getStorage();
@@ -622,6 +636,9 @@ const MapComponent = () => {
                   <p>{userInformation.id}</p>
                   <p>{userInformation.lat}</p>
                   <p>{userInformation.lng}</p>
+                  {imageList.map((url) => {
+                    return <img src={url} alt="" />
+                  })}
                   {/* <button onClick={getImages}>Get Images</button> */}
                 </div>
               )
