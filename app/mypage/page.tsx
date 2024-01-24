@@ -3,9 +3,10 @@
 import React, { useState, MouseEvent, useEffect } from 'react';
 import '../styles/globals.css';
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, reauthenticateWithCredential, sendEmailVerification, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword } from 'firebase/auth';
+import { onAuthStateChanged, reauthenticateWithCredential, sendEmailVerification, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/libs/firebase';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const MyPage = () => {
     // ログアウト状態の場合、TOPページに戻る処理
@@ -29,6 +30,7 @@ const MyPage = () => {
     const [changePassword, setChangePassword] = useState<string>("");
     const [credentialPassword, setCredentialPassword] = useState<string>("");
     const [credentialPassword2, setCredentialPassword2] = useState<string>("");
+    const [changeAccountName, setChangeAccountName] = useState<string>("");
 
     const user = auth.currentUser;
 
@@ -92,54 +94,72 @@ const MyPage = () => {
         }
     }
 
+    // アカウント名の変更処理
+    const handleClickChangeAccountName = async (e: MouseEvent<HTMLAnchorElement>) => {
+        // aタグ デフォルトの処理を防ぐ
+        e.preventDefault();
+        if(user) {
+            try {
+                updateProfile(user, { displayName: changeAccountName})
+                alert(`アカウント名が変更されました。新しいアカウント名は【${changeAccountName}】です。`);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
     return (
-        <div className="login-page-bg">
-            <div className="login-page">
-                <p>みんなの<br />思い出MAP</p>
-                <div>
-                    {/* <div className="input-wrapper">
-                        <label htmlFor="accountNameChange">アカウント名変更</label>
-                        <input type="text" id="accountNameChange" />
+        <div className="login-page-bg color-white">
+            <div className="header d-f jc-sb ai-c w-95 mx-a py-2p">
+                <Link href="/" className="sub-logo">
+                    <Image src="/images/sub-logo.png" alt="Logo Icon" width={100} height={100} />
+                </Link>
+                <Link href="/" className="top-btn">TOPに戻る</Link>
+            </div>
+            <div className="d-f jc-sa">
+                <div className="w-20">
+                    <p className="fz-m ta-c">アカウント名変更</p>
+                    <div>
+                        <label htmlFor="accountNameChange" className="d-b">新アカウント名を入力</label>
+                        <input type="text" id="accountNameChange" className="w-100 bd-rd-s bd-n fz-m" onChange={(e) => setChangeAccountName(e.target.value)} />
                     </div>
-                    <div className="login-btn-wrapper">
-                        <a href="" className="login-btn">アカウント名変更</a>
-                    </div> */}
-                    <p>登録メールアドレス変更</p>
-                    <div className="input-wrapper">
-                        <label htmlFor="passwordChange">1,パスワード入力</label>
-                        <input type="text" id="passwordChange" value={credentialPassword} onChange={(e) => setCredentialPassword(e.target.value)} />
-                    </div>
-                    <div className="login-btn-wrapper">
-                        <a href="" className="login-btn" onClick={(e) => handleClickSendEmail(e, credentialPassword)}>確認メール送信</a>
-                    </div>
-                    <div className="input-wrapper">
-                        <label htmlFor="mailChange">2,新しいメールアドレス</label>
-                        <input type="text" id="mailChange" value={changeEmail} onChange={(e) => setChangeEmail(e.target.value)} />
-                    </div>
-                    <div className="login-btn-wrapper">
-                        <a href="" className="login-btn" onClick={handleClickChangeEmail}>メールアドレス変更</a>
-                    </div>
-                    <br /><br />
-                    <p>パスワード変更</p>
-                    <div className="input-wrapper">
-                        <label htmlFor="passwordChange">1,パスワード入力</label>
-                        <input type="text" id="passwordChange" value={credentialPassword2} onChange={(e) => setCredentialPassword2(e.target.value)} />
-                    </div>
-                    <div className="login-btn-wrapper">
-                        <a href="" className="login-btn" onClick={(e) => handleClickSendEmail(e, credentialPassword2)}>確認メール送信</a>
-                    </div>
-                    <div className="input-wrapper">
-                        <label htmlFor="mailChange">2,新しいパスワード</label>
-                        <input type="text" id="mailChange" value={changePassword} onChange={(e) => setChangePassword(e.target.value)} />
-                    </div>
-                    <div className="login-btn-wrapper">
-                        <a href="" className="login-btn" onClick={handleClickChangePassword}>パスワード変更</a>
+                    <div className="login-btn-wrapper mt-5p">
+                        <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangeAccountName}>アカウント名変更</a>
                     </div>
                 </div>
-                <div className="top-btn-wrapper">
-                    <Link href="/" className="top-btn">
-                        TOPに戻る
-                    </Link>
+                <div className="w-20">
+                    <p className="fz-m ta-c">登録メールアドレス変更</p>
+                    <div>
+                        <label htmlFor="passwordChange" className="d-b">1,パスワード入力</label>
+                        <input type="text" id="passwordChange" className="w-100 bd-rd-s bd-n fz-m" value={credentialPassword} onChange={(e) => setCredentialPassword(e.target.value)} />
+                    </div>
+                    <div className="login-btn-wrapper mt-5p">
+                        <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={(e) => handleClickSendEmail(e, credentialPassword)}>確認メール送信</a>
+                    </div>
+                    <div className="mt-10p">
+                        <label htmlFor="mailChange" className="d-b">2,新しいメールアドレス</label>
+                        <input type="text" id="mailChange" className="w-100 bd-rd-s bd-n fz-m" value={changeEmail} onChange={(e) => setChangeEmail(e.target.value)} />
+                    </div>
+                    <div className="login-btn-wrapper mt-5p">
+                        <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangeEmail}>メールアドレス変更</a>
+                    </div>
+                </div>
+                <div className="w-20">
+                    <p className="fz-m ta-c">パスワード変更</p>
+                    <div>
+                        <label htmlFor="passwordChange" className="d-b">1,パスワード入力</label>
+                        <input type="text" id="passwordChange" className="w-100 bd-rd-s bd-n fz-m" value={credentialPassword2} onChange={(e) => setCredentialPassword2(e.target.value)} />
+                    </div>
+                    <div className="login-btn-wrapper mt-5p">
+                        <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={(e) => handleClickSendEmail(e, credentialPassword2)}>確認メール送信</a>
+                    </div>
+                    <div className="mt-10p">
+                        <label htmlFor="mailChange" className="d-b">2,新しいパスワード</label>
+                        <input type="text" id="mailChange" className="w-100 bd-rd-s bd-n fz-m" value={changePassword} onChange={(e) => setChangePassword(e.target.value)} />
+                    </div>
+                    <div className="login-btn-wrapper mt-5p">
+                        <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangePassword}>パスワード変更</a>
+                    </div>
                 </div>
             </div>
         </div>
