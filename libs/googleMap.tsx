@@ -637,7 +637,9 @@ const MapComponent = () => {
                   <p>{userInformation.lat}</p>
                   <p>{userInformation.lng}</p>
                   {imageList.map((url) => {
-                    return <img src={url} alt="" className="w-10" />
+                    if(url.indexOf(userInformation.id) !== -1) {
+                      return <img src={url} alt="" className="w-10" />
+                    }
                   })}
                   {/* <button onClick={getImages}>Get Images</button> */}
                 </div>
