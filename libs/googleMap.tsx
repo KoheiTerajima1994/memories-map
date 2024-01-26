@@ -14,6 +14,8 @@ import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { connectStorageEmulator, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import "swiper/css";
 
 const MapComponent = () => {
 
@@ -623,29 +625,32 @@ const MapComponent = () => {
           </div>
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
-          <div className={`post-modal ${isOpenPostModal ? "active" : ""}`}>
-            <p>これは投稿モーダルです。</p>
+          <div className={`post-modal d-f fd-c ${isOpenPostModal ? "active" : ""}`}>
             {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
                 <div key={index}>
-                  {/* <img src={getImg} alt="" /> */}
-                  <p>{userInformation.dateAndTime}</p>
-                  <p>{userInformation.name}</p>
-                  <p>{userInformation.text}</p>
-                  <p>{userInformation.id}</p>
-                  <p>{userInformation.lat}</p>
-                  <p>{userInformation.lng}</p>
-                  {imageList.map((url) => {
-                    if(url.indexOf(userInformation.id) !== -1) {
-                      return <img src={url} alt="" className="w-10" />
-                    }
-                  })}
-                  {/* <button onClick={getImages}>Get Images</button> */}
+                  <Swiper className="sample-slider">
+                    <SwiperSlide
+                    loop={true}
+                    >
+                      {imageList.map((url) => {
+                        if(url.indexOf(userInformation.id) !== -1) {
+                          return <img src={url} alt="" className="w-10" />
+                        }
+                      })}
+                      <p>{userInformation.dateAndTime}</p>
+                      <p>{userInformation.name}</p>
+                      <p>{userInformation.text}</p>
+                      {/* <p>{userInformation.id}</p>
+                      <p>{userInformation.lat}</p>
+                      <p>{userInformation.lng}</p> */}
+                    </SwiperSlide>
+                  </Swiper>
                 </div>
               )
             ))}
-            <a href="" className="post-modal-close" onClick={closePostModal}>「！！！モーダルを閉じる！！！」</a>
+            <a href="" className="img-uploader-blue-btn" onClick={closePostModal}>モーダルを閉じる</a>
           </div>
         </>
   );
