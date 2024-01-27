@@ -198,6 +198,7 @@ const MapComponent = () => {
     console.log('true!!');
   },[]);
 
+
   // Firebaseに登録した場所をインポートしたい
   const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
   const [postingUserInformation, setPostingUserInformation] = useState<{dateAndTime: string, name: string, text: string, id: string, lat: number, lng: number}[] | null>(null);
@@ -253,15 +254,21 @@ const MapComponent = () => {
       setPostingUserInformation(userInformation);
       console.log(userInformation);
     }
+
     postingLocationRead();
   },[]);
 
   // Firebaseから引っ張ってきたマーカーをクリックした時の処理
   const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
   const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
+
+  // 新しく追加！！！
+  const [originalPostingLatLng, setOriginalPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
+
   const openPostModal = (e: google.maps.MapMouseEvent) => {
     console.log('マーカーがクリックされました。');
     setIsOpenPostModal(true);
+
     // クリックした場所の緯度・経度を表示
     const clickedLat: number = e.latLng.lat();
     const clickedLng: number = e.latLng.lng();
@@ -305,130 +312,6 @@ const MapComponent = () => {
     })
   },[])
 
-
-  // Storageにある画像を表示したい→現状、取得できない…非同期で取得しなくてはいけない？
-  // const storage = getStorage();
-  // const pathReference = ref(storage, 'gs://omoide-map.appspot.com/image/2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg');
-  // console.log(pathReference);
-
-  // const storage = getStorage(app);
-  // const pathReference = ref(storage, 'image/');
-
-  // const [getImg, setGetImg] = useState<string>("");
-
-  // const handleDownloadAll = async () => {
-  //   const directoryRef = ref(storage, 'image/'); // ディレクトリへの参照
-  //   const files = await listAll(directoryRef); // ディレクトリ内のファイル一覧を取得
-  //   console.log(files);
-  
-  //   const downloadURLs = await Promise.all(files.items.map(async (fileRef) => {
-  //     console.log(fileRef);
-  //     return await getDownloadURL(fileRef); // 各ファイルに対してダウンロードURLを取得
-  //   }));
-  
-  //   console.log(downloadURLs);
-  // };
-  
-  // useEffect(() => {
-  //   handleDownloadAll();
-  // },[]);
-
-  // const handleDownload = async () => {
-  //   const fileName = "2999c9b6-960e-4133-9585-d30ca1baf9ae/LINE_ALBUM_230411_7.jpg";
-  //   const fileRef = ref(storage, `image/${fileName}`);
-  //   const url = await getDownloadURL(fileRef);
-  //   console.log(url);
-  // }
-
-  // useEffect(() => {
-  //   handleDownload();
-  // },[])
-
-  // useEffect(() => {
-  //   listAll(pathReference)
-  //     .then((res) => {
-  //       res.prefixes.forEach((itemRef) => {
-  //         console.log(itemRef.fullPath);
-  //         setGetImg(itemRef.fullPath);
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error("画像が取得できません。");
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   listAll(pathReference)
-  //     .then(async (res) => {
-  //       // itemsに対して処理
-  //       await Promise.all(res.items.map(async (itemRef) => {
-  //         const downloadURL = await getDownloadURL(itemRef);
-  //         console.log(downloadURL);
-  //         // ダウンロードURLを利用して必要な処理を行う
-  //         console.log("ダウンロードURLが正常に表示されました。");
-  //       }));
-  //     })
-  //     .catch((error) => {
-  //       console.error("画像が取得できません。", error);
-  //     });
-  // }, []);
-
-  // useEffect(() => {
-  //   listAll(pathReference)
-  //     .then((res) => {
-  //       // res.itemsにはディレクトリ内の各ファイルの参照が含まれています
-  //       const fileRefs = res.items;
-  
-  //       // 各ファイルに対してダウンロードURLを取得
-  //       const downloadURLPromises = fileRefs.map(fileRef => getDownloadURL(fileRef));
-  
-  //       // Promise.allを使用してすべてのダウンロードURLを取得
-  //       Promise.all(downloadURLPromises)
-  //         .then(urls => {
-  //           // urlsには各ファイルのダウンロードURLが配列として含まれています
-  //           setGetImg(urls);
-  //         })
-  //         .catch(error => {
-  //           console.error("ダウンロードURLの取得に失敗しました。", error);
-  //         });
-  //     })
-  //     .catch((error) => {
-  //       console.error("画像一覧の取得に失敗しました。", error);
-  //     });
-  // }, []);
-
-  // const storage = getStorage(app);
-  // const listRef = ref(storage, 'image/');
-
-  // console.log(storage);
-
-  // useEffect(() => {
-  //   listAll(listRef)
-  //   .then((res) => {
-  //     res.items.forEach((itemRef) => {
-  //       console.log(itemRef);
-  //     });
-  //   }).catch((error) => {
-  //     console.error(error);
-  //   })
-  // },[]);
-
-  // const storage = getStorage(app);
-
-  // useEffect(() => {
-  //   const getImageUrl = async (imageRef) => {
-  //     try {
-  //       const url = await getDownloadURL(imageRef);
-  //       console.log(url);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   const imageRef = ref(storage, `image/34241baa-2341-4806-ad0b-ef9135a14142`);
-  //   getImageUrl(imageRef);
-  // }, []);
-
   // 画像アップローダーモーダルの表示/非表示
   const [isImgUploaderModal1, setIsImgUploaderModal1] = useState<boolean>(false);
   const [isImgUploaderModal2, setIsImgUploaderModal2] = useState<boolean>(false);
@@ -442,6 +325,11 @@ const MapComponent = () => {
     setIsImgUploaderModal1(true);
 
     setMapClickOparationEnabled(true);
+
+    // originalPostingLatLngに元のデータをセット
+    setOriginalPostingLatLng(postingLatLng);
+    // setPostingLatLngをnullにする
+    setPostingLatLng(null);
   }
 
   // 2枚目のモーダルを開く&1枚目のモーダルを閉じる
@@ -488,6 +376,13 @@ const MapComponent = () => {
 
     // ピン立て無効
     setMapClickOparationEnabled(false);
+
+    // originalPostingLatLngがあればそれを使って元に戻す
+    if (originalPostingLatLng !== null) {
+      setPostingLatLng(originalPostingLatLng);
+      // originalPostingLatLngをクリア
+      setOriginalPostingLatLng(null);
+    }
   }
 
   return (
@@ -629,10 +524,11 @@ const MapComponent = () => {
             {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
-                <div key={index}>
+                // <div key={index}>
                   <Swiper className="sample-slider">
                     <SwiperSlide
                     loop={true}
+                    key={index}
                     >
                       {imageList.map((url) => {
                         if(url.indexOf(userInformation.id) !== -1) {
@@ -647,7 +543,7 @@ const MapComponent = () => {
                       <p>{userInformation.lng}</p> */}
                     </SwiperSlide>
                   </Swiper>
-                </div>
+                // </div>
               )
             ))}
             <a href="" className="img-uploader-blue-btn" onClick={closePostModal}>モーダルを閉じる</a>
