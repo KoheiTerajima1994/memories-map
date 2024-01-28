@@ -16,23 +16,34 @@ import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
+import InitialAnimation from '@/app/parts/InitialAnimation';
+import Hamburger from '@/app/parts/Hamburger';
+import Search from '@/app/parts/Search';
+// import LoginJudgement from '@/app/parts/LoginJudgement';
 
 const MapComponent = () => {
 
-  // 初回読み込み時、表示画面
-  const [initialAnm, setInitialAnm] = useState<boolean>(false);
-  useEffect(() => {
-    setInitialAnm(true);
-  },[]);
 
-  // ハンバーガーメニューの開閉
-  const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
-  const openMenu = () => {
-    setIsMenuBarActive(true);
+  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
+  const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [name, setName] = useState<string>("");
+
+  // アカウント名の取得
+  const accountNameAcquisition = () => {
+    const accountName: any = auth.currentUser;
+    setName(accountName.displayName);
   }
-  const closeMenu = () => {
-    setIsMenuBarActive(false);
-  }
+
+  useEffect(() => {
+      onAuthStateChanged(auth, (currentUser) => {
+          if(currentUser) {
+              setUser(currentUser);
+              setIsUnderMenuActive(true);
+              accountNameAcquisition();
+          }
+      });
+  }, []);
 
   // マップ初期位置
   const [center, setCenter] = useState<{ lat: number, lng: number }>({
@@ -45,7 +56,6 @@ const MapComponent = () => {
   height: '100vh',
   width: '100vw',
   };
-
 
   // マップクリックでピン立ての処理(地図に写真を追加するの段階で有効にさせる)
   const [mapClickOparationEnabled, setMapClickOparationEnabled] = useState<boolean>(false);
@@ -79,57 +89,6 @@ const MapComponent = () => {
     mapRef.current = map;
   }, []);
 
-  // 検索ワード入力用
-  const [searchWord, setSearchWord] = useState<string>('');
-
-  // キーワードをもとに検索させる関数
-  function getMapData() {
-    try {
-      // geocoderオブジェクトの取得
-      const geocoder = new window.google.maps.Geocoder();
-      let getLat = 0;
-      let getLng = 0;
-      // 検索キーワードを使ってGeocodeでの位置検索
-      geocoder.geocode({ address: searchWord }, async (results, status) => {
-        if (status === 'OK' && results) {
-          getLat = results[0].geometry.location.lat();
-          getLng = results[0].geometry.location.lng();
-          const center = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng()
-          };
-          setMarkerPoint(center);
-        }
-      });
-      alert('検索するよ');
-
-    } catch (error) {
-      alert('検索処理でエラーが発生しました！');
-      throw error;
-    }
-  }
-
-  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
-  const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [name, setName] = useState<string>("");
-
-  // アカウント名の取得
-  const accountNameAcquisition = () => {
-    const accountName: any = auth.currentUser;
-    setName(accountName.displayName);
-  }
-
-  useEffect(() => {
-      onAuthStateChanged(auth, (currentUser) => {
-          if(currentUser) {
-              setUser(currentUser);
-              setIsUnderMenuActive(true);
-              accountNameAcquisition();
-          }
-      });
-  }, []);
-
   // 画像、音声、動画にはStorageを用いる
 
   // 画像パスをhandleImgSelectからonFileUploadToFirebaseに渡す用
@@ -141,6 +100,10 @@ const MapComponent = () => {
     setImgPath(file);
   }
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isUploaded, setIsUploaded] = useState<boolean>(false);
+  const [uploadStatusModal, setUploadStatusModal] = useState<boolean>(false);
+
   const onFileUploadToFirebase = (uniqueId: string) => {
     console.log(imgPath);
     // パスにuniqueIdを付与
@@ -148,18 +111,21 @@ const MapComponent = () => {
     const uploadImage = uploadBytesResumable(storageRef, imgPath);
     // 状態表示
     uploadImage.on("state_changed", (snapshot) => {
-      // setLoading(true);
-      alert('アップロード中です。');
+      setLoading(true);
+      setUploadStatusModal(true);
       },
       (err) => {
         console.log(err);
       },
       () => {
-        alert('アップロードが完了しました。');
-        // setLoading(false);
-        // setIsUploaded(true);
+        setLoading(false);
+        setIsUploaded(true);
       }
     );
+  }
+
+  const closeUploadStatusModal = () => {
+    setUploadStatusModal(false);
   }
 
   // Firebaseに投稿場所を登録
@@ -189,6 +155,9 @@ const MapComponent = () => {
     setDateAndTime("");
     setImgPath("");
     setTextArea("");
+
+    // 投稿モーダルを閉じる
+    setIsImgUploaderModal4(false);
   }
 
   // google mapを一度のみ読み込みたい。。。。！！！
@@ -306,11 +275,12 @@ const MapComponent = () => {
     listAll(imageListRef).then((response) => {
       response.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
-          setImageList((prev) => [...prev, url])
+          setImageList((prev) => [...prev, url]);
         })
       })
     })
-  },[])
+    console.log('ここで処理が重なっている？');
+  },[]);
 
   // 画像アップローダーモーダルの表示/非表示
   const [isImgUploaderModal1, setIsImgUploaderModal1] = useState<boolean>(false);
@@ -334,37 +304,52 @@ const MapComponent = () => {
 
   // 2枚目のモーダルを開く&1枚目のモーダルを閉じる
   const openImgUploaderModal2 = () => {
-    // 1枚目のモーダルを閉じる
-    setIsImgUploaderModal1(false);
-    // 3枚目のモーダルを閉じる
-    setIsImgUploaderModal3(false);
-    // 2枚目のモーダルを開く
-    setIsImgUploaderModal2(true);
-
-    setMapClickOparationEnabled(true);
+    // ピンが刺されている際の処理
+    if(latLng !== null) {
+      // 1枚目のモーダルを閉じる
+      setIsImgUploaderModal1(false);
+      // 3枚目のモーダルを閉じる
+      setIsImgUploaderModal3(false);
+      // 2枚目のモーダルを開く
+      setIsImgUploaderModal2(true);
+  
+      setMapClickOparationEnabled(true);
+    } else {
+      alert('ピンを刺してください。');
+    }
   }
 
   // 3枚目のモーダルを開く&2枚目のモーダルを閉じる
   const openImgUploaderModal3 = () => {
-    // 2枚目のモーダルを閉じる
-    setIsImgUploaderModal2(false);
-    // 4枚目のモーダルを閉じる
-    setIsImgUploaderModal4(false);
-    // 3枚目のモーダルを開く
-    setIsImgUploaderModal3(true);
-
-    setMapClickOparationEnabled(true);
+    // 撮影日時が入力されている場合の処理
+    if(dateAndTime !== "") {
+      // 2枚目のモーダルを閉じる
+      setIsImgUploaderModal2(false);
+      // 4枚目のモーダルを閉じる
+      setIsImgUploaderModal4(false);
+      // 3枚目のモーダルを開く
+      setIsImgUploaderModal3(true);
+  
+      setMapClickOparationEnabled(true);
+    } else {
+      alert('撮影日時を入力してください。');
+    }
   }
 
   // 4枚目のモーダルを開く&3枚目のモーダルを閉じる
   const openImgUploaderModal4 = () => {
-    // 3枚目のモーダルを閉じる
-    setIsImgUploaderModal3(false);
-    // 4枚目のモーダルを開く
-    setIsImgUploaderModal4(true);
-
-    // ピン立て有効
-    setMapClickOparationEnabled(true);
+    // 画像が投稿されている場合の処理
+    if(imgPath !== "") {
+      // 3枚目のモーダルを閉じる
+      setIsImgUploaderModal3(false);
+      // 4枚目のモーダルを開く
+      setIsImgUploaderModal4(true);
+  
+      // ピン立て有効
+      setMapClickOparationEnabled(true);
+    } else {
+      alert('画像ファイルを添付してください。');
+    }
   }
 
   // モーダル自体を閉じる処理
@@ -387,27 +372,13 @@ const MapComponent = () => {
 
   return (
         <>
-          <div className={`initial-anm ${initialAnm ? 'active' : ''}`}>
-            <div>
-              <div className="mapIcon">
-                <Image src="/images/map-icon.png" className="swing" alt="Map Icon" width={100} height={100} />
-              </div>
-              <p className="initial-anm-title">みんなの<br/>思い出MAP</p>
-              <p className="initial-anm-subtitle">消えゆく景色を残したい。</p>
-            </div>
-          </div>
+          {/* ロード時のアニメーション */}
+          <InitialAnimation />
           <div className="search-bar-position">
             <div className="search-bar-left" onClick={openMenu}>
               <MenuIcon></MenuIcon>
             </div>
-            <div className="search-bar-center">
-              <input
-              id="pac-input"
-              type="text"
-              placeholder="検索"
-              onChange={(e) => { setSearchWord(e.target.value) }}
-              />
-            </div>
+            <Search />
             <div className="search-bar-right" onClick={async () => { await getMapData() }}>
               <SearchIcon></SearchIcon>
             </div>
@@ -431,30 +402,7 @@ const MapComponent = () => {
           ):(
             <p>エラーです。</p>
           )}
-          <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>
-            <CloseIcon onClick={closeMenu} className="close-btn"></CloseIcon>
-            <div className="menu-bar-contents">
-              <div className="logoIcon mb-sm">
-                <Image src="/images/logo.png" alt="Logo Icon" width={150} height={150} />
-              </div>
-              {/* ログインされていれば表示 */}
-              {name && <p>{name}さん、こんにちは！</p>}
-              <p className="fz-sm lh-sm my-xl">このアプリは、時代の変化とともに消えゆく景色を残したいという思いから作られたアプリです。会員登録いただくと、投稿ができるようになります。</p>
-              {name ? (
-                <>
-                  <Link href="/mypage" className="menu-bar-blue-btn">マイページ</Link>
-                  <LogoutBtn />
-                  <Link href="/howto" className="under-line-btn">使い方</Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" className="menu-bar-blue-btn">ログイン</Link>
-                  <Link href="/signup" className="under-line-btn">登録はこちら</Link>
-                  <Link href="/howto" className="under-line-btn">使い方</Link>
-                </>
-              )}
-              </div>
-          </div>
+          <Hamburger />
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
             <div className="register-photo" onClick={openImgUploaderModal1}>
@@ -467,7 +415,7 @@ const MapComponent = () => {
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
               <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
-              <div className="img-uploader-blue-btn mx-a" onClick={openImgUploaderModal2}>次へ</div>
+              <div className="img-uploader-blue-btn mx-a w-20 py-1p" onClick={openImgUploaderModal2}>次へ</div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
           </div>
@@ -480,8 +428,8 @@ const MapComponent = () => {
                   <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
               </div>
               <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn" onClick={openImgUploaderModal1}>前へ</div>
-                <div className="img-uploader-blue-btn" onClick={openImgUploaderModal3}>次へ</div>
+                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal1}>前へ</div>
+                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal3}>次へ</div>
               </div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
@@ -495,8 +443,8 @@ const MapComponent = () => {
                   <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
               </div>
               <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn" onClick={openImgUploaderModal2}>前へ</div>
-                <div className="img-uploader-blue-btn" onClick={openImgUploaderModal4}>次へ</div>
+                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal2}>前へ</div>
+                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal4}>次へ</div>
               </div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
@@ -510,7 +458,7 @@ const MapComponent = () => {
                   <textarea id="comment" className="comment-width" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
               <div className="d-f jc-c">
-                <div className="img-uploader-blue-btn" onClick={openImgUploaderModal3}>前へ</div>
+                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal3}>前へ</div>
               </div>
               <div className="d-f jc-c mt-3p">
                 <div className="img-uploader-orange-btn" onClick={upLoadFirebaseAndStorage}>投稿する</div>
@@ -521,32 +469,46 @@ const MapComponent = () => {
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
           <div className={`post-modal d-f fd-c ${isOpenPostModal ? "active" : ""}`}>
+            <Swiper className="sample-slider w-30">
             {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
-                // <div key={index}>
-                  <Swiper className="sample-slider">
-                    <SwiperSlide
-                    loop={true}
-                    key={index}
-                    >
-                      {imageList.map((url) => {
-                        if(url.indexOf(userInformation.id) !== -1) {
-                          return <img src={url} alt="" className="w-10" />
-                        }
-                      })}
-                      <p>{userInformation.dateAndTime}</p>
-                      <p>{userInformation.name}</p>
-                      <p>{userInformation.text}</p>
-                      {/* <p>{userInformation.id}</p>
-                      <p>{userInformation.lat}</p>
-                      <p>{userInformation.lng}</p> */}
-                    </SwiperSlide>
-                  </Swiper>
-                // </div>
+                <SwiperSlide
+                loop={true}
+                key={index}
+                >
+                  {imageList.map((url) => {
+                    if(url.indexOf(userInformation.id) !== -1) {
+                      return <div className="d-f jc-c ai-c"><img src={url} alt="" className="w-70" /></div>
+                    }
+                  })}
+                  <p>{userInformation.dateAndTime}</p>
+                  <p>{userInformation.name}</p>
+                  <p>{userInformation.text}</p>
+                  {/* <p>{userInformation.id}</p>
+                  <p>{userInformation.lat}</p>
+                  <p>{userInformation.lng}</p> */}
+                </SwiperSlide>
+                )
+              ))}
+            </Swiper>
+            <a href="" className="img-uploader-blue-btn w-30 py-1p" onClick={closePostModal}>モーダルを閉じる</a>
+          </div>
+          {/* アップロード状況 */}
+          <div className={`grey-filter ${uploadStatusModal ? 'active' : ''}`}></div>
+          <div className={`uploadStatusModal ${uploadStatusModal ? 'active' : ''}`}>
+            {loading ? (
+              <p className="fz-xl">アップロード中です…</p>
+            ) : (
+              isUploaded ? (
+                <div>
+                  <p className="fz-xl">アップロードが完了しました。</p>
+                  <div className="img-uploader-blue-btn mx-a w-20 py-1p" onClick={closeUploadStatusModal}>OK</div>
+                </div>
+              ) : (
+                null
               )
-            ))}
-            <a href="" className="img-uploader-blue-btn" onClick={closePostModal}>モーダルを閉じる</a>
+            )}
           </div>
         </>
   );

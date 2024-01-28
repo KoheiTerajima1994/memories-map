@@ -56,3 +56,17 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 
 ・資料作成
 
+
+
+【処理を分ける】
+・初回読み込み時の表示画面→完了
+・ハンバーガーメニューの開閉→nameをどこかから引っ張ってくる
+・マップ初期位置の設定
+・マップクリックのピン立て
+・検索機能→setMarkerPointをどっかから引っ張ってくる
+・ログイン判定処理→propsの関係性がよくわからない
+・Firebaseアップ処理
+・Firebaseインポート処理
+・マーカークリック処理
+・Storage画像取得処理
+・画像アップローダーモーダル表示非表示処理

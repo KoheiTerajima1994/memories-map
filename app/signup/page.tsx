@@ -9,7 +9,6 @@ const Login = () => {
     return (
         <div className="login-page-bg">
             <div className="login-page">
-                <p>みんなの<br />思い出MAP</p>
                 <SignUpBtn />
             </div>
         </div>
