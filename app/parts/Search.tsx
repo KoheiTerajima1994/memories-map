@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import SearchIcon from '@mui/icons-material/Search';
 
-export default function Search() {
+// マーカーポイントの型定義
+type MarkerPoint = {
+  lat: number,
+  lng: number,
+}
+
+export default function Search({ setMarkerPoint }: { setMarkerPoint: React.Dispatch<React.SetStateAction<MarkerPoint>> }) {
   // 検索ワード入力用
   const [searchWord, setSearchWord] = useState<string>('');
 
@@ -25,8 +32,6 @@ export default function Search() {
           setMarkerPoint(center);
         }
       });
-      alert('検索するよ');
-
     } catch (error) {
       alert('検索処理でエラーが発生しました！');
       throw error;
@@ -34,6 +39,7 @@ export default function Search() {
   }
 
     return (
+      <>
         <div className="search-bar-center">
             <input
             id="pac-input"
@@ -42,5 +48,9 @@ export default function Search() {
             onChange={(e) => { setSearchWord(e.target.value) }}
             />
         </div>
+        <div className="search-bar-right" onClick={async () => { await getMapData() }}>
+        <SearchIcon></SearchIcon>
+        </div>
+      </>
     )
 }

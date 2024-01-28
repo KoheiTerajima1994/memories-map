@@ -1,20 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
 import LogoutBtn from './LogoutBtn';
 import Image from 'next/image';
 
-export default function Hamburger() {
-    // ハンバーガーメニューの開閉
-    const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
-    const openMenu = () => {
-        setIsMenuBarActive(true);
-    }
-    const closeMenu = () => {
-        setIsMenuBarActive(false);
-    }
+export default function Hamburger(props: any) {
+    const {name, isMenuBarActive, closeMenu} = props;
 
     return (
         <div className={`menu-bar ${isMenuBarActive ? 'active' : ''}`}>
@@ -30,13 +22,13 @@ export default function Hamburger() {
                 <>
                 <Link href="/mypage" className="menu-bar-blue-btn fz-s">マイページ</Link>
                 <LogoutBtn />
-                <Link href="/howto" className="under-line-btn fz-s">使い方</Link>
+                {/* <Link href="/howto" className="under-line-btn fz-s">使い方</Link> */}
                 </>
             ) : (
                 <>
                 <Link href="/login" className="menu-bar-blue-btn fz-s">ログイン</Link>
                 <Link href="/signup" className="under-line-btn fz-s">登録はこちら</Link>
-                <Link href="/howto" className="under-line-btn fz-s">使い方</Link>
+                {/* <Link href="/howto" className="under-line-btn fz-s">使い方</Link> */}
                 </>
             )}
             </div>

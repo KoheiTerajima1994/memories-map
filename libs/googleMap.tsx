@@ -23,7 +23,6 @@ import Search from '@/app/parts/Search';
 
 const MapComponent = () => {
 
-
   // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
   const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -44,6 +43,16 @@ const MapComponent = () => {
           }
       });
   }, []);
+
+  // ハンバーガーメニューの開閉
+  const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
+  const openMenu = () => {
+    setIsMenuBarActive(true);
+  }
+  const closeMenu = () => {
+      setIsMenuBarActive(false);
+  }
+
 
   // マップ初期位置
   const [center, setCenter] = useState<{ lat: number, lng: number }>({
@@ -378,10 +387,7 @@ const MapComponent = () => {
             <div className="search-bar-left" onClick={openMenu}>
               <MenuIcon></MenuIcon>
             </div>
-            <Search />
-            <div className="search-bar-right" onClick={async () => { await getMapData() }}>
-              <SearchIcon></SearchIcon>
-            </div>
+            <Search setMarkerPoint={setMarkerPoint} />
           </div>
           {load ? (
             <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
@@ -402,7 +408,7 @@ const MapComponent = () => {
           ):(
             <p>エラーです。</p>
           )}
-          <Hamburger />
+          <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
             <div className="register-photo" onClick={openImgUploaderModal1}>
@@ -474,7 +480,6 @@ const MapComponent = () => {
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
                 <SwiperSlide
-                loop={true}
                 key={index}
                 >
                   {imageList.map((url) => {
