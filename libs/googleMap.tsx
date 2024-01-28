@@ -248,10 +248,8 @@ const MapComponent = () => {
     setIsOpenPostModal(true);
 
     // クリックした場所の緯度・経度を表示
-    if(e.latLng) {
-      const clickedLat: number = e.latLng.lat();
-      const clickedLng: number = e.latLng.lng();
-    }
+    const clickedLat: number = e.latLng.lat();
+    const clickedLng: number = e.latLng.lng();
 
     // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
     const latLngInformation: {
