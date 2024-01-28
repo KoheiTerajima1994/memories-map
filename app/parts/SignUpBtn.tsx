@@ -48,7 +48,7 @@ export default function SignUpBtn() {
                 router.push("/");
             }
         });
-    }, []);
+    }, [router]);
 
     return (
         <div className="login-page-bg color-white">

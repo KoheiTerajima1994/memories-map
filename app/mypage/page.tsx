@@ -19,7 +19,7 @@ const MyPage = () => {
             }
         });
         return () => unsubscribe();
-    },[]);
+    },[router]);
 
     // アドレスを変更させる処理
     // (Firebaseの再認証→メール確認→別処理でFirebaseへ新規メールアドレス登録)

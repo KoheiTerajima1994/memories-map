@@ -38,7 +38,7 @@ export default function LoginBtn() {
                 router.push("/");
             }
         });
-    }, []);
+    }, [router]);
 
     return (
         <div className="login-page-bg color-white">
