@@ -248,22 +248,31 @@ const MapComponent = () => {
     setIsOpenPostModal(true);
 
     // クリックした場所の緯度・経度を表示
-    const clickedLat: number = e.latLng.lat();
-    const clickedLng: number = e.latLng.lng();
-
-    // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
-    const latLngInformation: {
-      lat: number;
-      lng: number;
-    }[] = [];
-
-    latLngInformation.push({
-      lat: clickedLat,
-      lng: clickedLng,
-    });
-    // 取得するのは、配列の0番目
-    // setMemoLatLng(latLngInformation[0]);
-    setMemoLatLng(latLngInformation);
+    if(e.latLng) {
+      const clickedLat: number = e.latLng.lat();
+      const clickedLng: number = e.latLng.lng();
+      
+      // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
+      const latLngInformation: {
+        lat: number;
+        lng: number;
+      }[] = [];
+  
+      const markerPoint: {
+        lat: number;
+        lng: number;
+      } = {
+        lat: clickedLat,
+        lng: clickedLng,
+      };
+  
+      latLngInformation.push(markerPoint);
+      // 取得するのは、配列の0番目
+      // setMemoLatLng(latLngInformation[0]);
+      setMemoLatLng(latLngInformation);
+    } else {
+      console.log('エラーが発生しました。');
+    }
   }
 
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -278,7 +287,7 @@ const MapComponent = () => {
   }
 
   // Storageにある画像全件取得
-  const [imageList, setImageList] = useState([]);
+  const [imageList, setImageList] = useState<string[]>([]);
   const imageListRef = ref(storage, "image/");
   useEffect(() => {
     listAll(imageListRef).then((response) => {
