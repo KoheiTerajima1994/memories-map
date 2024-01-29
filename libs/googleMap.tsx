@@ -408,7 +408,7 @@ const MapComponent = () => {
                 onLoad={onMapLoad}
               >
                 <Marker position={markerPoint} />
-                <Marker position={latLng} />
+                {latLng && <Marker position={latLng} />}
                 {postingLatLng !== null && postingLatLng.map((location, index) => (
                   <Marker key={index} position={location} onClick={openPostModal} />
                 ))}
