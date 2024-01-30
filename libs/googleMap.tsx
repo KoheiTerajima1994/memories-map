@@ -19,30 +19,31 @@ import "swiper/css";
 import InitialAnimation from '@/app/parts/InitialAnimation';
 import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
+import AuthStatus from '@/app/parts/AuthStatus';
 // import LoginJudgement from '@/app/parts/LoginJudgement';
 
 const MapComponent = () => {
 
-  // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
-  const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [name, setName] = useState<string>("");
+  // // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
+  // const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
+  // const [user, setUser] = useState<User | null>(null);
+  // const [name, setName] = useState<string>("");
 
-  // アカウント名の取得
-  const accountNameAcquisition = () => {
-    const accountName: any = auth.currentUser;
-    setName(accountName.displayName);
-  }
+  // // アカウント名の取得
+  // const accountNameAcquisition = () => {
+  //   const accountName: any = auth.currentUser;
+  //   setName(accountName.displayName);
+  // }
 
-  useEffect(() => {
-      onAuthStateChanged(auth, (currentUser) => {
-          if(currentUser) {
-              setUser(currentUser);
-              setIsUnderMenuActive(true);
-              accountNameAcquisition();
-          }
-      });
-  }, []);
+  // useEffect(() => {
+  //     onAuthStateChanged(auth, (currentUser) => {
+  //         if(currentUser) {
+  //             setUser(currentUser);
+  //             setIsUnderMenuActive(true);
+  //             accountNameAcquisition();
+  //         }
+  //     });
+  // }, []);
 
   // ハンバーガーメニューの開閉
   const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -52,7 +53,6 @@ const MapComponent = () => {
   const closeMenu = () => {
       setIsMenuBarActive(false);
   }
-
 
   // マップ初期位置
   const [center, setCenter] = useState<{ lat: number, lng: number }>({
@@ -419,12 +419,13 @@ const MapComponent = () => {
           )}
           <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
-          <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
+          {/* <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
             <div className="register-photo" onClick={openImgUploaderModal1}>
               <AddAPhotoIcon />
               <p>地図に写真を追加する</p>
             </div>
-          </div>
+          </div> */}
+          <AuthStatus />
           {/* 1枚目モーダル */}
           <div className={`img-uploader-modal ${isImgUploaderModal1 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
