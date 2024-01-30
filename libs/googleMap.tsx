@@ -20,30 +20,23 @@ import InitialAnimation from '@/app/parts/InitialAnimation';
 import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
 import AuthStatus from '@/app/parts/AuthStatus';
-// import LoginJudgement from '@/app/parts/LoginJudgement';
 
 const MapComponent = () => {
 
-  // // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
-  // const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
-  // const [user, setUser] = useState<User | null>(null);
-  // const [name, setName] = useState<string>("");
-
-  // // アカウント名の取得
-  // const accountNameAcquisition = () => {
-  //   const accountName: any = auth.currentUser;
-  //   setName(accountName.displayName);
-  // }
-
-  // useEffect(() => {
-  //     onAuthStateChanged(auth, (currentUser) => {
-  //         if(currentUser) {
-  //             setUser(currentUser);
-  //             setIsUnderMenuActive(true);
-  //             accountNameAcquisition();
-  //         }
-  //     });
-  // }, []);
+  // アカウント名の取得と表示
+  const [name, setName] = useState<string>("");
+  // アカウント名の取得
+  const accountNameAcquisition = () => {
+    const accountName: any = auth.currentUser;
+    setName(accountName.displayName);
+  }
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+        if(currentUser) {
+            accountNameAcquisition();
+        }
+    });
+}, []);
 
   // ハンバーガーメニューの開閉
   const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -59,12 +52,18 @@ const MapComponent = () => {
     lat: 35.68134074965259,
     lng: 139.76719989855425,
   });
-
   // マップサイズ
   const mapContainerStyle = {
   height: '100vh',
   width: '100vw',
   };
+
+  // マーカーポイントの型定義
+  type MarkerPoint = {
+    lat: number,
+    lng: number,
+  }
+  const [markerPoint, setMarkerPoint] = useState<MarkerPoint>(center);
 
   // マップクリックでピン立ての処理(地図に写真を追加するの段階で有効にさせる)
   const [mapClickOparationEnabled, setMapClickOparationEnabled] = useState<boolean>(false);
@@ -84,13 +83,6 @@ const MapComponent = () => {
     }
   }
 
-  // マーカーポイントの型定義
-  type MarkerPoint = {
-    lat: number,
-    lng: number,
-  }
-  const [markerPoint, setMarkerPoint] = useState<MarkerPoint>(center);
-
   // 参照を保持し、その値をメモ化しているので、再レンダリングが起こらない
   const mapRef = useRef();
   // メモ化されたコールバックを返す
@@ -99,7 +91,6 @@ const MapComponent = () => {
   }, []);
 
   // 画像、音声、動画にはStorageを用いる
-
   // 画像パスをhandleImgSelectからonFileUploadToFirebaseに渡す用
   const [imgPath, setImgPath] = useState<any>('');
 
@@ -419,13 +410,7 @@ const MapComponent = () => {
           )}
           <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
-          {/* <div className={`top-under-menu ${isUnderMenuActive ? 'active' : ''}`}>
-            <div className="register-photo" onClick={openImgUploaderModal1}>
-              <AddAPhotoIcon />
-              <p>地図に写真を追加する</p>
-            </div>
-          </div> */}
-          <AuthStatus />
+          <AuthStatus openImgUploaderModal1={openImgUploaderModal1} />
           {/* 1枚目モーダル */}
           <div className={`img-uploader-modal ${isImgUploaderModal1 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">

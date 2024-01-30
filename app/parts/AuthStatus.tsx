@@ -1,29 +1,27 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEventHandler } from 'react';
 import { auth } from '@/libs/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 
-export default function AuthStatus() {
+// 返り値がないので、voidで型をつける
+interface modal1 {
+    openImgUploaderModal1: () => void;
+}
 
-    // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuとアカウント名を表示
+export default function AuthStatus(props: modal1) {
+    const {openImgUploaderModal1} = props;
+
+    // ログインしているか否かを判定する処理→ログイン状態ならば、top-under-menuを表示
     const [isUnderMenuActive, setIsUnderMenuActive] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null);
-    const [name, setName] = useState<string>("");
-
-    // アカウント名の取得
-    const accountNameAcquisition = () => {
-        const accountName: any = auth.currentUser;
-        setName(accountName.displayName);
-    }
 
     useEffect(() => {
         onAuthStateChanged(auth, (currentUser) => {
             if(currentUser) {
                 setUser(currentUser);
                 setIsUnderMenuActive(true);
-                accountNameAcquisition();
             }
         });
     }, []);
