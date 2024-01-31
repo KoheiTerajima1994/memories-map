@@ -7,6 +7,7 @@ import { onAuthStateChanged, reauthenticateWithCredential, sendEmailVerification
 import { auth } from '@/libs/firebase';
 import Link from 'next/link';
 import Image from 'next/image';
+import useAccountName from '@/hooks/useAccountName';
 
 const MyPage = () => {
     // ログアウト状態の場合、TOPページに戻る処理
@@ -108,6 +109,8 @@ const MyPage = () => {
         }
     }
 
+    const name = useAccountName();
+
     return (
         <div className="login-page-bg color-white">
             <div className="header d-f jc-sb ai-c w-95 mx-a py-2p">
@@ -116,6 +119,7 @@ const MyPage = () => {
                 </Link>
                 <Link href="/" className="top-btn">TOPに戻る</Link>
             </div>
+            <p className="ta-c fz-m">{name}さんのマイページ</p>
             <div className="d-f jc-sa">
                 <div className="w-20">
                     <p className="fz-m ta-c">アカウント名変更</p>

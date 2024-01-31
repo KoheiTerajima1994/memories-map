@@ -3,40 +3,23 @@
 import React, { useCallback, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Link from 'next/link';
-import LogoutBtn from '../app/parts/LogoutBtn';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { app, auth, db, storage } from './firebase';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { connectStorageEmulator, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytesResumable } from 'firebase/storage';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db, storage } from './firebase';
+import { addDoc, collection, onSnapshot } from 'firebase/firestore';
+import { getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
 import InitialAnimation from '@/app/parts/InitialAnimation';
 import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
 import AuthStatus from '@/app/parts/AuthStatus';
+import useAccountName from '@/hooks/useAccountName';
 
 const MapComponent = () => {
 
-  // アカウント名の取得と表示
-  const [name, setName] = useState<string>("");
-  // アカウント名の取得
-  const accountNameAcquisition = () => {
-    const accountName: any = auth.currentUser;
-    setName(accountName.displayName);
-  }
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-        if(currentUser) {
-            accountNameAcquisition();
-        }
-    });
-}, []);
+// アカウント名を取得するカスタムフック
+const name = useAccountName();
 
   // ハンバーガーメニューの開閉
   const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -145,6 +128,14 @@ const MapComponent = () => {
     setTextArea("");
   }
 
+  // ファイルアップローダーのリセット
+  const resetImgPath = () => {
+    const fileInput = document.getElementById('img-fileup') as HTMLInputElement;
+    if(fileInput) {
+      fileInput.value = "";
+    }
+  }
+
   const upLoadFirebaseAndStorage = async () => {
     // Firestore DatabaseとStorage間で同じuuidを使用するために定義
     const uniqueId = uuidv4();
@@ -153,20 +144,13 @@ const MapComponent = () => {
 
     setLatLng(null);
     setDateAndTime("");
+    resetImgPath();
     setImgPath("");
     setTextArea("");
 
     // 投稿モーダルを閉じる
     setIsImgUploaderModal4(false);
   }
-
-  // google mapを一度のみ読み込みたい。。。。！！！
-  const [load, setLoad] = useState<boolean>(false);
-  useEffect(() => {
-    setLoad(true);
-    console.log('true!!');
-  },[]);
-
 
   // Firebaseに登録した場所をインポートしたい
   const [postingLatLng, setPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
@@ -176,52 +160,49 @@ const MapComponent = () => {
     const postingLocationRead = async () => {
       // 複数取得する場合は、collectionとgetDocsを使用後、forEachにてループを回す
       const collectionRef = collection(db, 'posting-location');
-      const querySnapshot = await getDocs(collectionRef);
+      // const querySnapshot = await getDocs(collectionRef);
 
-      // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
-      const locations: { lat: number; lng: number }[] = [];
-      const userInformation: {
-        dateAndTime: string;
-        name: string;
-        text: string;
-        id: string;
-        lat: number;
-        lng: number;
-      }[] = [];
+      const unsubscribe = onSnapshot(collectionRef, (querySnapshot) => {
+        // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
+        const locations: { lat: number; lng: number }[] = [];
+        const userInformation: {
+          dateAndTime: string;
+          name: string;
+          text: string;
+          id: string;
+          lat: number;
+          lng: number;
+        }[] = [];
 
-      querySnapshot.forEach((doc) => {
-        // console.log(doc.data());
-        // console.log(doc.data().latLng.lat);
-        // console.log(doc.data().latLng.lng);
-        // console.log(doc.data().dateAndTime);
-        // console.log(doc.data().name);
-        // console.log(doc.data().text);
-        // console.log(doc.data().id);
-
-        // lat,lngを配列の末尾に追加していく処理
-        const containerPostingLat: number = doc.data().latLng.lat;
-        const containerPostingLng: number = doc.data().latLng.lng;
-        locations.push({ lat: containerPostingLat, lng: containerPostingLng });
-        // console.log(locations);
-
-        // 投稿時間、アカウント名、テキスト、idを配列の末尾に追加していく処理
-        const containerPostingDateAndTime: string = doc.data().dateAndTime;
-        const containerPostingName: string = doc.data().name;
-        const containerPostingText: string = doc.data().text;
-        const containerPostingId: string = doc.data().id;
-        userInformation.push({
-          dateAndTime: containerPostingDateAndTime,
-          name: containerPostingName,
-          text: containerPostingText,
-          id: containerPostingId,
-          lat: containerPostingLat,
-          lng: containerPostingLng,
+        querySnapshot.forEach((doc) => {
+  
+          // lat,lngを配列の末尾に追加していく処理
+          const containerPostingLat: number = doc.data().latLng.lat;
+          const containerPostingLng: number = doc.data().latLng.lng;
+          locations.push({ lat: containerPostingLat, lng: containerPostingLng });
+  
+          // 投稿時間、アカウント名、テキスト、idを配列の末尾に追加していく処理
+          const containerPostingDateAndTime: string = doc.data().dateAndTime;
+          const containerPostingName: string = doc.data().name;
+          const containerPostingText: string = doc.data().text;
+          const containerPostingId: string = doc.data().id;
+          userInformation.push({
+            dateAndTime: containerPostingDateAndTime,
+            name: containerPostingName,
+            text: containerPostingText,
+            id: containerPostingId,
+            lat: containerPostingLat,
+            lng: containerPostingLng,
+          });
         });
+        // ここから、実際のピン立て
+        setPostingLatLng(locations);
+        setPostingUserInformation(userInformation);
+        console.log(userInformation);
       });
-      // ここから、実際のピン立て
-      setPostingLatLng(locations);
-      setPostingUserInformation(userInformation);
-      console.log(userInformation);
+
+      // コンポーネントがアンマウントされるときに通信を解除
+      return () => unsubscribe();
     }
 
     postingLocationRead();
@@ -231,7 +212,7 @@ const MapComponent = () => {
   const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
   const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
 
-  // 新しく追加！！！
+  // 画像アップローダー起動時、既存マーカー非表示のため
   const [originalPostingLatLng, setOriginalPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
 
   const openPostModal = (e: google.maps.MapMouseEvent) => {
@@ -287,8 +268,7 @@ const MapComponent = () => {
           setImageList((prev) => [...prev, url]);
         })
       })
-    })
-    console.log('ここで処理が重なっている？');
+    });
   },[]);
 
   // 画像アップローダーモーダルの表示/非表示
@@ -389,25 +369,21 @@ const MapComponent = () => {
             </div>
             <Search setMarkerPoint={setMarkerPoint} />
           </div>
-          {load ? (
-            <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={markerPoint}
-                zoom={15}
-                onClick={handleMapClick}
-                onLoad={onMapLoad}
-              >
-                <Marker position={markerPoint} />
-                {latLng && <Marker position={latLng} />}
-                {postingLatLng !== null && postingLatLng.map((location, index) => (
-                  <Marker key={index} position={location} onClick={openPostModal} />
-                ))}
-              </GoogleMap>
-            </LoadScript>
-          ):(
-            <p>エラーです。</p>
-          )}
+          <LoadScript googleMapsApiKey = {String(process.env.NEXT_PUBLIC_GOOGLEMAPS_API_KEY)}>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={markerPoint}
+              zoom={15}
+              onClick={handleMapClick}
+              onLoad={onMapLoad}
+            >
+              <Marker position={markerPoint} />
+              {latLng && <Marker position={latLng} />}
+              {postingLatLng !== null && postingLatLng.map((location, index) => (
+                <Marker key={index} position={location} onClick={openPostModal} />
+              ))}
+            </GoogleMap>
+          </LoadScript>
           <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
           <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
           <AuthStatus openImgUploaderModal1={openImgUploaderModal1} />

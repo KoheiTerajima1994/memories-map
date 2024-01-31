@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, MouseEventHandler } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '@/libs/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
