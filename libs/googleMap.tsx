@@ -458,9 +458,9 @@ const name = useAccountName();
                       return <div className="d-f jc-c ai-c"><img src={url} alt="" className="w-70" /></div>
                     }
                   })}
-                  <p>{userInformation.dateAndTime}</p>
-                  <p>{userInformation.name}</p>
-                  <p>{userInformation.text}</p>
+                  <p>投稿日：{userInformation.dateAndTime}</p>
+                  <p>アカウント名：{userInformation.name}さん</p>
+                  <p>コメント：{userInformation.text}</p>
                   {/* <p>{userInformation.id}</p>
                   <p>{userInformation.lat}</p>
                   <p>{userInformation.lng}</p> */}
