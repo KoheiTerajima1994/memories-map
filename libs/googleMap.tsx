@@ -505,3 +505,4 @@ const name = useAccountName();
 };
 
 export default MapComponent;
+
