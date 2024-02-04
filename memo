@@ -66,6 +66,8 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 ・検索機能→setMarkerPointをどっかから引っ張ってくる→完了？
 ・ログイン判定処理→ログイン認証、下部メニューとユーザー名取得で処理を分けた
 ・Firebaseアップ処理
+→画像inputから画像パスを取得、
+
 ・Firebaseインポート処理
 ・マーカークリック処理
 ・Storage画像取得処理

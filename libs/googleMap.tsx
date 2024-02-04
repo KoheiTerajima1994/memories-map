@@ -15,6 +15,7 @@ import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
 import AuthStatus from '@/app/parts/AuthStatus';
 import useAccountName from '@/hooks/useAccountName';
+import HandleImgSelect from '@/app/parts/HandleImgSelect';
 
 const MapComponent = () => {
 
@@ -77,11 +78,11 @@ const name = useAccountName();
   // 画像パスをhandleImgSelectからonFileUploadToFirebaseに渡す用
   const [imgPath, setImgPath] = useState<any>('');
 
-  const handleImgSelect = (e: any) => {
-    console.log(e.target.files[0].name);
-    const file = e.target.files[0];
-    setImgPath(file);
-  }
+  // const handleImgSelect = (e: any) => {
+  //   console.log(e.target.files[0].name);
+  //   const file = e.target.files[0];
+  //   setImgPath(file);
+  // }
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isUploaded, setIsUploaded] = useState<boolean>(false);
@@ -429,10 +430,11 @@ const name = useAccountName();
           <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <div className="input-wrapper mb-3p">
+              {/* <div className="input-wrapper mb-3p">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
                   <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
-              </div>
+              </div> */}
+              <HandleImgSelect setImgPath={setImgPath} />
               <div className="d-f mx-a ai-c jc-c gap-3">
                 <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal2}>前へ</div>
                 <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal4}>次へ</div>
@@ -505,4 +507,3 @@ const name = useAccountName();
 };
 
 export default MapComponent;
-
