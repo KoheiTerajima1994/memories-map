@@ -3,8 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import MenuIcon from '@mui/icons-material/Menu';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db, storage } from './firebase';
+import { db, storage } from './firebase';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +14,6 @@ import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
 import AuthStatus from '@/app/parts/AuthStatus';
 import useAccountName from '@/hooks/useAccountName';
-// import HandleImgSelect from '@/app/parts/HandleImgSelect';
 
 const MapComponent = () => {
 
@@ -77,6 +75,12 @@ const name = useAccountName();
   // 画像、音声、動画にはStorageを用いる
   // 画像パスをhandleImgSelectからonFileUploadToFirebaseへ渡す
   const [imgPath, setImgPath] = useState<any>('');
+
+    const handleImgSelect = (e: any) => {
+      console.log(e.target.files[0].name);
+      const file = e.target.files[0];
+      setImgPath(file);
+    }
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isUploaded, setIsUploaded] = useState<boolean>(false);
@@ -424,7 +428,6 @@ const name = useAccountName();
           <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              {/* <HandleImgSelect setImgPath={setImgPath} /> */}
               <div className="input-wrapper mb-3p">
                   <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
                   <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />

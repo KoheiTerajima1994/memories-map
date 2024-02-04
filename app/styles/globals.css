@@ -70,6 +70,9 @@ a {
     color: #fff;
     width: 30%;
     cursor: pointer;
+    @media (max-width: 767px) {
+      padding: 3% 0;
+    }
 }
 .img-uploader-orange-btn:hover {
     background: #fff;
