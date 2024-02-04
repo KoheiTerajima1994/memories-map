@@ -15,7 +15,7 @@ import Hamburger from '@/app/parts/Hamburger';
 import Search from '@/app/parts/Search';
 import AuthStatus from '@/app/parts/AuthStatus';
 import useAccountName from '@/hooks/useAccountName';
-import HandleImgSelect from '@/app/parts/HandleImgSelect';
+// import HandleImgSelect from '@/app/parts/HandleImgSelect';
 
 const MapComponent = () => {
 
@@ -424,7 +424,11 @@ const name = useAccountName();
           <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <HandleImgSelect setImgPath={setImgPath} />
+              {/* <HandleImgSelect setImgPath={setImgPath} /> */}
+              <div className="input-wrapper mb-3p">
+                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
+                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
+              </div>
               <div className="d-f mx-a ai-c jc-c gap-3">
                 <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal2}>前へ</div>
                 <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal4}>次へ</div>
