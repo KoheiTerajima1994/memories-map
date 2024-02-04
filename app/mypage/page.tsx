@@ -117,11 +117,11 @@ const MyPage = () => {
                 <Link href="/" className="sub-logo">
                     <Image src="/images/sub-logo.png" alt="Logo Icon" width={100} height={100} />
                 </Link>
-                <Link href="/" className="top-btn">TOPに戻る</Link>
+                <Link href="/" className="top-btn fz-sm sp-fz-m">TOPに戻る</Link>
             </div>
             <p className="ta-c fz-m">{name}さんのマイページ</p>
-            <div className="d-f jc-sa">
-                <div className="w-20">
+            <div className="d-f jc-sa sp-fd-c">
+                <div className="w-20 sp-w-90 sp-mx-a">
                     <p className="fz-m ta-c">アカウント名変更</p>
                     <div>
                         <label htmlFor="accountNameChange" className="d-b">新アカウント名を入力</label>
@@ -131,7 +131,7 @@ const MyPage = () => {
                         <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangeAccountName}>アカウント名変更</a>
                     </div>
                 </div>
-                <div className="w-20">
+                <div className="w-20 sp-w-90 sp-mx-a sp-mt-15p">
                     <p className="fz-m ta-c">登録メールアドレス変更</p>
                     <div>
                         <label htmlFor="passwordChange" className="d-b">1,パスワード入力</label>
@@ -148,7 +148,7 @@ const MyPage = () => {
                         <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangeEmail}>メールアドレス変更</a>
                     </div>
                 </div>
-                <div className="w-20">
+                <div className="w-20 sp-w-90 sp-mx-a sp-my-15p"> 
                     <p className="fz-m ta-c">パスワード変更</p>
                     <div>
                         <label htmlFor="passwordChange" className="d-b">1,パスワード入力</label>

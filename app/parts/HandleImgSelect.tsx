@@ -1,10 +1,6 @@
 "use client";
 
-import { useState } from 'react';
-
 export default function HandleImgSelect(props: any) {
-  // 画像パスをhandleImgSelectからonFileUploadToFirebaseへ渡す
-//   const [imgPath, setImgPath] = useState<any>('');
 
   // 画像アップローダーのパス取得
   const handleImgSelect = (e: any) => {

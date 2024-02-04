@@ -41,15 +41,15 @@ export default function LoginBtn() {
     }, [router]);
 
     return (
-        <div className="login-page-bg color-white">
+        <div className="signup-page-bg color-white">
             <div className="header d-f jc-sb ai-c w-95 mx-a py-2p">
                 <Link href="/" className="sub-logo">
                     <Image src="/images/sub-logo.png" alt="Logo Icon" width={100} height={100} />
                 </Link>
-                <Link href="/" className="top-btn">TOPに戻る</Link>
+                <Link href="/" className="top-btn fz-sm sp-fz-m">TOPに戻る</Link>
             </div>
 
-            <div className="w-30 mx-a">
+            <div className="w-30 sp-w-90 mx-a">
                 <p className="fz-m">ログインページ</p>
                 <div>
                     <label htmlFor="mail" className="fz-m ta-c">メールアドレス</label>

@@ -7,11 +7,13 @@ import SignUpBtn from "../parts/SignUpBtn";
 const Login = () => {
 
     return (
-        <div className="login-page-bg">
-            <div className="login-page">
+        <>
+         {/* <div className="login-page-bg">
+             <div className="login-page"> */}
                 <SignUpBtn />
-            </div>
-        </div>
+            {/* </div>
+        </div> */}
+        </>
     );
 }
 

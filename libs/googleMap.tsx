@@ -75,14 +75,8 @@ const name = useAccountName();
   }, []);
 
   // 画像、音声、動画にはStorageを用いる
-  // 画像パスをhandleImgSelectからonFileUploadToFirebaseに渡す用
+  // 画像パスをhandleImgSelectからonFileUploadToFirebaseへ渡す
   const [imgPath, setImgPath] = useState<any>('');
-
-  // const handleImgSelect = (e: any) => {
-  //   console.log(e.target.files[0].name);
-  //   const file = e.target.files[0];
-  //   setImgPath(file);
-  // }
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isUploaded, setIsUploaded] = useState<boolean>(false);
@@ -407,7 +401,7 @@ const name = useAccountName();
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
               <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
-              <div className="img-uploader-blue-btn mx-a w-20 py-1p" onClick={openImgUploaderModal2}>次へ</div>
+              <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal2}>次へ</div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
           </div>
@@ -420,8 +414,8 @@ const name = useAccountName();
                   <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
               </div>
               <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal1}>前へ</div>
-                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal3}>次へ</div>
+                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal1}>前へ</div>
+                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal3}>次へ</div>
               </div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
@@ -430,14 +424,10 @@ const name = useAccountName();
           <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
             <div className="img-uploader-modal-inner">
               <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              {/* <div className="input-wrapper mb-3p">
-                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
-                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
-              </div> */}
               <HandleImgSelect setImgPath={setImgPath} />
               <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal2}>前へ</div>
-                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal4}>次へ</div>
+                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal2}>前へ</div>
+                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal4}>次へ</div>
               </div>
               <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
             </div>
@@ -451,7 +441,7 @@ const name = useAccountName();
                   <textarea id="comment" className="comment-width" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
               </div>
               <div className="d-f jc-c">
-                <div className="img-uploader-blue-btn w-10 py-1p" onClick={openImgUploaderModal3}>前へ</div>
+                <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal3}>前へ</div>
               </div>
               <div className="d-f jc-c mt-3p">
                 <div className="img-uploader-orange-btn" onClick={upLoadFirebaseAndStorage}>投稿する</div>
