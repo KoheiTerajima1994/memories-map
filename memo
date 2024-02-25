@@ -72,3 +72,8 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 ・マーカークリック処理
 ・Storage画像取得処理
 ・画像アップローダーモーダル表示非表示処理
+
+オーバーロードとは、関数に対して複数の型を定義すること
+
+2/25
+・ピンの読み込みとピン立てができなくなってしまっている

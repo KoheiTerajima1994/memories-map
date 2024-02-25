@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
+import useMarkerPoint from "@/hooks/useMarkerPoint";
 
-// マーカーポイントの型定義
-type MarkerPoint = {
-  lat: number,
-  lng: number,
-}
 
-export default function Search({ setMarkerPoint }: { setMarkerPoint: React.Dispatch<React.SetStateAction<MarkerPoint>> }) {
+export default function Search() {
+  // マーカー初期位置を格納するカスタムフック
+  const { markerPoint, setMarkerPoint } = useMarkerPoint();
+  
   // 検索ワード入力用
   const [searchWord, setSearchWord] = useState<string>('');
 
