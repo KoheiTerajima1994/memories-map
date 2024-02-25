@@ -4,7 +4,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import "swiper/css";
 import FirebasePinImport from '@/app/components/FirebasePinImport';
-import MarkerClick from '@/hooks/useMarkerClick';
 import useLatLng from '@/hooks/useLatLng';
 import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
 import useMarkerPoint from '@/hooks/useMarkerPoint';
@@ -67,8 +66,6 @@ const MapComponent = () => {
               <Marker position={markerPoint} />
               {/* Firebaseに登録した場所をインポートする処理 */}
               <FirebasePinImport latLng={latLng} />
-              {/* Firebaseから引っ張ってきたマーカーをクリックした時の処理、後でコンポーネント化する */}
-              {/* <MarkerClick /> */}
             </GoogleMap>
           </LoadScript>
         </>

@@ -2,14 +2,12 @@
 
 import MapComponent from '../libs/googleMap';
 import './styles/globals.css';
-import React, { useCallback, useEffect, useRef, useState, MouseEvent } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import React, { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { db, storage } from '../libs/firebase';
-import { addDoc, collection, onSnapshot } from 'firebase/firestore';
-import { getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
+import { addDoc, collection } from 'firebase/firestore';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
 import InitialAnimation from '@/app/components/InitialAnimation';
 import Hamburger from '@/app/components/Hamburger';
@@ -19,7 +17,10 @@ import useAccountName from '@/hooks/useAccountName';
 import useLatLng from '@/hooks/useLatLng';
 import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
 import usePostingLatLng from '@/hooks/usePostingLatLng';
-import usePostingUserInformation from '@/hooks/usePostingUserInformation';
+import useOriginalPostingLatLng from '@/hooks/useOriginalPostingLatLng';
+import useIsOpenPostModal from '@/hooks/useIsOpenPostModal';
+import PostModal from './components/PostModal';
+
 
 export default function Home() {
 // アカウント名を取得するカスタムフック
@@ -34,8 +35,8 @@ const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOpa
 // Firebaseから取得したピン立てを行うカスタムフック
 const { postingLatLng, setPostingLatLng } = usePostingLatLng();
 
-// Firebaseから取得した情報を格納するカスタムフック
-const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
+// 画像アップローダー起動時、既存マーカー表示、非表示を切り替えるカスタムフック
+const { originalPostingLatLng, setOriginalPostingLatLng } = useOriginalPostingLatLng();
 
 // ハンバーガーメニューの開閉
 const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -124,69 +125,6 @@ const upLoadFirebaseAndStorage = async () => {
   // 投稿モーダルを閉じる
   setIsImgUploaderModal4(false);
 }
-
-// Firebaseから引っ張ってきたマーカーをクリックした時の処理
-const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
-const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
-
-// 画像アップローダー起動時、既存マーカー非表示のため
-const [originalPostingLatLng, setOriginalPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
-
-const openPostModal = (e: google.maps.MapMouseEvent) => {
-  console.log('マーカーがクリックされました。');
-  setIsOpenPostModal(true);
-
-  // クリックした場所の緯度・経度を表示
-  if(e.latLng) {
-    const clickedLat: number = e.latLng.lat();
-    const clickedLng: number = e.latLng.lng();
-    
-    // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
-    const latLngInformation: {
-      lat: number;
-      lng: number;
-    }[] = [];
-
-    const markerPoint: {
-      lat: number;
-      lng: number;
-    } = {
-      lat: clickedLat,
-      lng: clickedLng,
-    };
-
-    latLngInformation.push(markerPoint);
-    // 取得するのは、配列の0番目
-    // setMemoLatLng(latLngInformation[0]);
-    setMemoLatLng(latLngInformation);
-  } else {
-    console.log('エラーが発生しました。');
-  }
-}
-
-const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
-  // aタグ デフォルトの処理を防ぐ
-  e.preventDefault();
-  console.log('モーダルを閉じるがクリックされました。');
-  setIsOpenPostModal(false);
-}
-const closePostModalBygreyFilter = () => {
-  console.log('モーダルを閉じるがクリックされました。');
-  setIsOpenPostModal(false);
-}
-
-// Storageにある画像全件取得
-const [imageList, setImageList] = useState<string[]>([]);
-const imageListRef = ref(storage, "image/");
-useEffect(() => {
-  listAll(imageListRef).then((response) => {
-    response.items.forEach((item) => {
-      getDownloadURL(item).then((url) => {
-        setImageList((prev) => [...prev, url]);
-      })
-    })
-  });
-},[]);
 
 // 画像アップローダーモーダルの表示/非表示
 const [isImgUploaderModal1, setIsImgUploaderModal1] = useState<boolean>(false);
@@ -348,32 +286,7 @@ const closeImgUploaderModal = () => {
             </div>
           </div>
           {/* 投稿モーダル表示 */}
-          <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
-          <div className={`post-modal d-f fd-c ${isOpenPostModal ? "active" : ""}`}>
-            <Swiper className="sample-slider w-30">
-            {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
-              // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
-              userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
-                <SwiperSlide
-                key={index}
-                >
-                  {imageList.map((url) => {
-                    if(url.indexOf(userInformation.id) !== -1) {
-                      return <div className="d-f jc-c ai-c"><img src={url} alt="" className="w-70" /></div>
-                    }
-                  })}
-                  <p>投稿日：{userInformation.dateAndTime}</p>
-                  <p>アカウント名：{userInformation.name}さん</p>
-                  <p>コメント：{userInformation.text}</p>
-                  {/* <p>{userInformation.id}</p>
-                  <p>{userInformation.lat}</p>
-                  <p>{userInformation.lng}</p> */}
-                </SwiperSlide>
-                )
-              ))}
-            </Swiper>
-            <a href="" className="img-uploader-blue-btn w-30 py-1p" onClick={closePostModal}>モーダルを閉じる</a>
-          </div>
+          <PostModal />
           {/* アップロード状況 */}
           <div className={`grey-filter ${uploadStatusModal ? 'active' : ''}`}></div>
           <div className={`uploadStatusModal ${uploadStatusModal ? 'active' : ''}`}>
