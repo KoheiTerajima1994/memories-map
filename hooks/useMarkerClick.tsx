@@ -5,7 +5,7 @@ import { Marker } from '@react-google-maps/api';
 import usePostingLatLng from "@/hooks/usePostingLatLng";
 
 
-export default function MarkerClick() {
+const useMarkerClick = () => {
     // Firebaseに登録された経度、緯度を取得するカスタムフック
     const { postingLatLng, setPostingLatLng } = usePostingLatLng();
 
@@ -49,11 +49,7 @@ export default function MarkerClick() {
         }
     }
     
-    return (
-        <>
-        {postingLatLng !== null && postingLatLng.map((location, index) => (
-            <Marker key={index} position={location} onClick={openPostModal} />
-        ))}
-        </>
-    )
-}
+    return openPostModal;
+};
+
+export default useMarkerClick;

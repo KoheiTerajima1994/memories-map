@@ -6,6 +6,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { Marker } from '@react-google-maps/api';
 import usePostingUserInformation from "@/hooks/usePostingUserInformation";
 import usePostingLatLng from "@/hooks/usePostingLatLng";
+import useMarkerClick from "@/hooks/useMarkerClick";
 
 type LatLng = {
     lat: number;
@@ -18,6 +19,9 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
     // Firebaseに登録した場所をインポートしたい
     // Firebaseから取得したピン立てを行うカスタムフック
     const { postingLatLng, setPostingLatLng } = usePostingLatLng();
+
+    // モーダルをオープンするカスタムフック
+    const { openPostModal } = useMarkerClick();
 
     // Firebaseから取得した情報を格納するカスタムフック
     const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
@@ -95,6 +99,9 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
     return (
         <>
         {latLng && <Marker position={latLng} />}
+        {postingLatLng !== null && postingLatLng.map((location, index) => (
+            <Marker key={index} position={location} onClick={openPostModal} />
+        ))}
         </>
     )
 }

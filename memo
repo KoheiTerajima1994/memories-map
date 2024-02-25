@@ -77,3 +77,4 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 
 2/25
 ・ピンの読み込みとピン立てができなくなってしまっている
+・useMarkerClickをMarkerClickに戻し、openPostModalの処理を分ける
