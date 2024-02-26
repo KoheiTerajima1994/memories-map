@@ -1,6 +1,22 @@
 "use client";
 
+import { useIsUpLoadingContext } from "../context/IsUploadedProvider";
+import { useLoadingContext } from "../context/LoadingProvider";
+import { useUploadStatusModalContext } from "../context/UploadStatusModalProvider";
+
 export default function ImgUploadStatus() {
+    // 画像アップローダーモーダルの開閉状態をコンテキストにて管理
+    const { uploadStatusModal, setUploadStatusModal } = useUploadStatusModalContext();
+
+    // ロード状態をコンテキストにて管理
+    const { loading, setLoading } = useLoadingContext();
+
+    // アップロード完了状態をコンテキストにて管理
+    const { isUploaded, setIsUploaded } = useIsUpLoadingContext();
+
+    const closeUploadStatusModal = () => {
+      setUploadStatusModal(false);
+    }
 
     return (
         <>

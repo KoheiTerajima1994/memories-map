@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // コンテキスト作成、デフォルト値をnullに設定
-const LatLngContext = createContext<{ latLng: { lat: number; lng: number; }[] | null; setLatLng: React.Dispatch<React.SetStateAction<{ lat: number; lng: number; }[] | null>> }>({
+const LatLngContext = createContext<{ latLng: { lat: number; lng: number; } | null; setLatLng: React.Dispatch<React.SetStateAction<{ lat: number; lng: number; } | null>> }>({
   latLng: null,
   setLatLng: () => {}
 });
@@ -16,7 +16,7 @@ interface LatLngProviderProps {
 
 // コンテキストを提供するコンポーネント(プロバイダー)
 export const LatLngProvider = ({ children }: LatLngProviderProps) => {
-  const [latLng, setLatLng] = useState<{lat: number, lng: number}[] | null>(null);
+  const [latLng, setLatLng] = useState<{lat: number, lng: number} | null>(null);
 
   return (
     <LatLngContext.Provider value={{ latLng, setLatLng }}>

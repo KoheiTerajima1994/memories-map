@@ -82,6 +82,10 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 コンテキスト化させるもの(プロバイダーで囲っていない)
 const { latLng, setLatLng } = useLatLng();→完了
 const { postingLatLng, setPostingLatLng } = usePostingLatLng();→完了
-const [uploadStatusModal, setUploadStatusModal] = useState<boolean>(false);→要らなかった
-const [loading, setLoading] = useState<boolean>(false);
-const [isUploaded, setIsUploaded] = useState<boolean>(false);
+const [uploadStatusModal, setUploadStatusModal] = useState<boolean>(false);→完了
+const [loading, setLoading] = useState<boolean>(false);→完了
+const [isUploaded, setIsUploaded] = useState<boolean>(false);→完了
+
+未完了
+const { markerPoint, setMarkerPoint } = useMarkerPoint();
+MarkerPointProvider.tsxから編集

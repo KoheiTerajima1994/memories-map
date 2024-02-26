@@ -10,6 +10,9 @@ import { useMapClickOparationEnabledContext } from '../context/MapClickOparation
 import useOriginalPostingLatLng from '@/hooks/useOriginalPostingLatLng';
 import { useLatLngContext } from '../context/LatLngProvider';
 import { usePostingLatLngContext } from '../context/PostingLatLngProvider';
+import { useUploadStatusModalContext } from '../context/UploadStatusModalProvider';
+import { useLoadingContext } from '../context/LoadingProvider';
+import { useIsUpLoadingContext } from '../context/IsUploadedProvider';
 
 export default function ImgUploadModal() {
   // 経度、緯度の状態管理をコンテキストにて管理
@@ -34,9 +37,12 @@ export default function ImgUploadModal() {
     setImgPath(file);
   }
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isUploaded, setIsUploaded] = useState<boolean>(false);
-  const [uploadStatusModal, setUploadStatusModal] = useState<boolean>(false);
+  // ロード状態をコンテキストにて管理
+  const { loading, setLoading } = useLoadingContext();
+  // アップロード完了状態をコンテキストにて管理
+  const { isUploaded, setIsUploaded } = useIsUpLoadingContext();
+  // 画像アップローダーモーダルの開閉状態をコンテキストにて管理
+  const { uploadStatusModal, setUploadStatusModal } = useUploadStatusModalContext();
 
   const onFileUploadToFirebase = (uniqueId: string) => {
   console.log(imgPath);
@@ -56,10 +62,6 @@ export default function ImgUploadModal() {
       setIsUploaded(true);
     }
   );
-  }
-
-  const closeUploadStatusModal = () => {
-  setUploadStatusModal(false);
   }
 
   // Firebaseに投稿場所を登録

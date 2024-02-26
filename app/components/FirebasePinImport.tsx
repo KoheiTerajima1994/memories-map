@@ -103,12 +103,6 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
 
     // ここから
     // Firebaseから引っ張ってきたマーカーをクリックした時の処理
-    // const [isOpenPostModal, setIsOpenPostModal] = useState<boolean>(false);
-    // const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
-
-    // 画像アップローダー起動時、既存マーカー非表示のため
-    // const [originalPostingLatLng, setOriginalPostingLatLng] = useState<{lat: number, lng: number}[] | null>(null);
-
     const openPostModal = (e: google.maps.MapMouseEvent) => {
         console.log('マーカーがクリックされました。');
         setIsOpenPostModal(true);
