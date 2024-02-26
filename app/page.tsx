@@ -27,6 +27,7 @@ import ImgUploadStatus from './components/ImgUploadStatus';
 import { UploadStatusModalProvider } from './context/UploadStatusModalProvider';
 import { LoadingProvider } from './context/LoadingProvider';
 import { UploadingProvider } from './context/IsUploadedProvider';
+import { MarkerPointProvider } from './context/MarkerPointProvider';
 
 
 export default function Home() {
@@ -53,6 +54,7 @@ const closeMenu = () => {
     <UploadStatusModalProvider>
     <LoadingProvider>
     <UploadingProvider>
+    <MarkerPointProvider>
         <main className="main">
             {/* ロード時のアニメーション */}
             <InitialAnimation />
@@ -71,6 +73,7 @@ const closeMenu = () => {
             {/* アップロード状況 */}
             <ImgUploadStatus />
         </main>
+    </MarkerPointProvider>
     </UploadingProvider>
     </LoadingProvider>
     </UploadStatusModalProvider>

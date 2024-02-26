@@ -1,44 +1,39 @@
 // ReactNodeは任意のReactコンポーネントを渡せることを示している
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import useMarkerInitialPoint from '../../hooks/useMarkerInitialPoint';
 
 // 型定義
-type PostingUserInformation = {
-  dateAndTime: string;
-  name: string;
-  text: string;
-  id: string;
-  lat: number;
-  lng: number;
-};
-type PostingUserInformationContextType = {
-  postingUserInformation: PostingUserInformation[] | null;
-  setPostingUserInformation: React.Dispatch<React.SetStateAction<PostingUserInformation[] | null>>;
-};
+type LatLng = {
+  lat: number,
+  lng: number,
+}
+// type MarkerPoint = LatLng | null;
+type MarkerPoint = any;
 
-// コンテキスト作成、デフォルト値をnullに設定
-const PostingUserInformationContext = createContext<PostingUserInformationContextType | null>(null);
+// コンテキスト作成
+const MarkerPointContext = createContext<{ markerPoint: MarkerPoint; setMarkerPoint: (point: MarkerPoint) => void } | undefined>(undefined);
 
 // カスタムフックの作成
-export const usePostingUserInformationContext = () => {
-  const context = useContext(PostingUserInformationContext);
-  // nullを返させないため
+export const useMarkerPointContext = () => {
+  const context = useContext(MarkerPointContext);
   if (!context) {
-    throw new Error("値が入っていないため、nullを返します。");
+    throw new Error("useMarkerPointContext must be used within a MarkerPointProvider");
   }
   return context;
 };
 
-interface PostingUserInformationProviderProps {
+interface MarkerPointContextProps {
     children: ReactNode;
 }
 
 // コンテキストを提供するコンポーネント(プロバイダー)
-export const PostingUserInformationProvider = ({ children }: PostingUserInformationProviderProps) => {
-  const [postingUserInformation, setPostingUserInformation] = useState<PostingUserInformation[] | null>(null);
+export const MarkerPointProvider = ({ children }: MarkerPointContextProps) => {
+  const { center, setCenter } = useMarkerInitialPoint();
+  const [markerPoint, setMarkerPoint] = useState<MarkerPoint>(center);
 
   return (
-    <PostingUserInformationContext.Provider value={{ postingUserInformation, setPostingUserInformation }}>
+    <MarkerPointContext.Provider value={{ markerPoint, setMarkerPoint }}>
       {children}
-    </PostingUserInformationContext.Provider>
+    </MarkerPointContext.Provider>
   );
 };

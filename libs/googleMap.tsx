@@ -4,9 +4,9 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import "swiper/css";
 import FirebasePinImport from '@/app/components/FirebasePinImport';
-import useMarkerPoint from '@/hooks/useMarkerPoint';
 import { useMapClickOparationEnabledContext } from '@/app/context/MapClickOparationEnabledProvider';
 import { useLatLngContext } from '@/app/context/LatLngProvider';
+import { useMarkerPointContext } from '@/app/context/MarkerPointProvider';
 
 const MapComponent = () => {
 
@@ -16,8 +16,9 @@ const MapComponent = () => {
   // マップクリックを有効状態をコンテキストにて管理
   const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabledContext();
 
-  // マップ初期位置を格納するカスタムフック
-  const { markerPoint, setMarkerPoint } = useMarkerPoint();
+
+  // マーカー初期位置をコンテキストにて管理
+  const { markerPoint, setMarkerPoint } = useMarkerPointContext();
 
   // マップサイズ
   const mapContainerStyle = {
