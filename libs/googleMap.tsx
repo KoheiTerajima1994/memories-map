@@ -4,15 +4,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import "swiper/css";
 import FirebasePinImport from '@/app/components/FirebasePinImport';
-import useLatLng from '@/hooks/useLatLng';
-// import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
 import useMarkerPoint from '@/hooks/useMarkerPoint';
 import { useMapClickOparationEnabledContext } from '@/app/context/MapClickOparationEnabledProvider';
+import { useLatLngContext } from '@/app/context/LatLngProvider';
 
 const MapComponent = () => {
 
-  // 経度、緯度の状態管理をするカスタムフック
-  const { latLng, setLatLng } = useLatLng();
+  // 経度、緯度の状態管理をコンテキストにて管理
+  const { latLng, setLatLng } = useLatLngContext();
 
   // マップクリックを有効状態をコンテキストにて管理
   const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabledContext();

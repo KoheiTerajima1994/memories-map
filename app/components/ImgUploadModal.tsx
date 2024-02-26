@@ -6,20 +6,20 @@ import { db, storage } from '../../libs/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-import useLatLng from '@/hooks/useLatLng';
 import { useMapClickOparationEnabledContext } from '../context/MapClickOparationEnabledProvider';
 import useOriginalPostingLatLng from '@/hooks/useOriginalPostingLatLng';
-import usePostingLatLng from '@/hooks/usePostingLatLng';
+import { useLatLngContext } from '../context/LatLngProvider';
+import { usePostingLatLngContext } from '../context/PostingLatLngProvider';
 
 export default function ImgUploadModal() {
-  // 経度、緯度の状態管理をするカスタムフック
-  const { latLng, setLatLng } = useLatLng();
+  // 経度、緯度の状態管理をコンテキストにて管理
+  const { latLng, setLatLng } = useLatLngContext();
 
   // マップクリックを有効状態をコンテキストにて管理
   const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabledContext();
 
-  // Firebaseから取得したピン立てを行うカスタムフック
-  const { postingLatLng, setPostingLatLng } = usePostingLatLng();
+  // Firebaseから取得したピン立てをコンテキストにて管理
+  const { postingLatLng, setPostingLatLng } = usePostingLatLngContext();
 
   // 画像アップローダー起動時、既存マーカー表示、非表示を切り替えるカスタムフック
   const { originalPostingLatLng, setOriginalPostingLatLng } = useOriginalPostingLatLng();

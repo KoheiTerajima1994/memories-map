@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { db } from '../../libs/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { Marker } from '@react-google-maps/api';
-import usePostingLatLng from "@/hooks/usePostingLatLng";
 import { usePostModalContext } from "../context/PostModalProvider";
 import { useMemoLatLngContext } from "../context/MemoLatLngProvider";
 import { usePostingUserInformationContext } from "../context/PostingUserInformationProvider";
+import { usePostingLatLngContext } from "../context/PostingLatLngProvider";
 
 type LatLng = {
     lat: number;
@@ -18,8 +18,8 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
     // props受け取り
     const { latLng } = props;
     // Firebaseに登録した場所をインポートしたい
-    // Firebaseから取得したピン立てを行うカスタムフック
-    const { postingLatLng, setPostingLatLng } = usePostingLatLng();
+    // Firebaseから取得したピン立てをコンテキストにて管理
+    const { postingLatLng, setPostingLatLng } = usePostingLatLngContext();
 
     // Firebaseから取得した情報をコンテキストにて管理
     // const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();

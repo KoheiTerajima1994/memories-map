@@ -78,3 +78,10 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 2/25
 ・ピンの読み込みとピン立てができなくなってしまっている
 ・useMarkerClickをMarkerClickに戻し、openPostModalの処理を分ける
+
+コンテキスト化させるもの(プロバイダーで囲っていない)
+const { latLng, setLatLng } = useLatLng();→完了
+const { postingLatLng, setPostingLatLng } = usePostingLatLng();→完了
+const [uploadStatusModal, setUploadStatusModal] = useState<boolean>(false);→要らなかった
+const [loading, setLoading] = useState<boolean>(false);
+const [isUploaded, setIsUploaded] = useState<boolean>(false);
