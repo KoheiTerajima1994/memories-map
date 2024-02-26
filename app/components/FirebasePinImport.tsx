@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import { db } from '../../libs/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { Marker } from '@react-google-maps/api';
-import usePostingUserInformation from "@/hooks/usePostingUserInformation";
+// import usePostingUserInformation from "@/hooks/___usePostingUserInformation";
 import usePostingLatLng from "@/hooks/usePostingLatLng";
-import useIsOpenPostModal from "@/hooks/useIsOpenPostModal";
-import useMemoLatLng from "@/hooks/useMemoLatLng";
+// import useIsOpenPostModal from "@/hooks/useIsOpenPostModal";
+// import useMemoLatLng from "@/hooks/useMemoLatLng";
+import { usePostModalContext } from "../context/PostModalProvider";
+import { useMemoLatLngContext } from "../context/MemoLatLngProvider";
+import { usePostingUserInformationContext } from "../context/PostingUserInformationProvider";
 
 type LatLng = {
     lat: number;
@@ -21,14 +24,16 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
     // Firebaseから取得したピン立てを行うカスタムフック
     const { postingLatLng, setPostingLatLng } = usePostingLatLng();
 
-    // Firebaseから取得した情報を格納するカスタムフック
-    const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
+    // Firebaseから取得した情報をコンテキストにて管理
+    // const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
+    const { postingUserInformation, setPostingUserInformation } = usePostingUserInformationContext();
 
-    // モーダルの開閉状態を管理するカスタムフック
-    const { isOpenPostModal, setIsOpenPostModal } = useIsOpenPostModal();
+    // 投稿モーダルの開閉状態をコンテキストにて管理
+    const { isOpenPostModal, setIsOpenPostModal } = usePostModalContext();
 
-    // 経度、緯度をメモ管理するカスタムフック
-    const { memoLatLng, setMemoLatLng } = useMemoLatLng();
+    // 経度、緯度をメモ管理状態をコンテキストにて管理
+    // const { memoLatLng, setMemoLatLng } = useMemoLatLng();
+    const { memoLatLng, setMemoLatLng } = useMemoLatLngContext();
     
     // firebaseに登録したものを全て取得する
     useEffect(() => {

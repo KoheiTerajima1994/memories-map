@@ -2,22 +2,27 @@
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
-import useIsOpenPostModal from '@/hooks/useIsOpenPostModal';
-import useMemoLatLng from '@/hooks/useMemoLatLng';
-import usePostingUserInformation from '@/hooks/usePostingUserInformation';
+// import useIsOpenPostModal from '@/hooks/useIsOpenPostModal';
+// import useMemoLatLng from '@/hooks/useMemoLatLng';
+import usePostingUserInformation from '@/hooks/___usePostingUserInformation';
 import { MouseEvent, useEffect, useState } from 'react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import { storage } from '../../libs/firebase';
+import { usePostModalContext } from '../context/PostModalProvider';
+import { useMemoLatLngContext } from '../context/MemoLatLngProvider';
+import { usePostingUserInformationContext } from '../context/PostingUserInformationProvider';
 
 export default function PostModal() {
-  // 投稿モーダルの開閉状態を管理するカスタムフック
-  const { isOpenPostModal, setIsOpenPostModal } = useIsOpenPostModal();
+  // 投稿モーダルの開閉状態をコンテキストにて管理
+  const { isOpenPostModal, setIsOpenPostModal } = usePostModalContext();
 
-  // 経度、緯度をメモ管理するカスタムフック
-  const { memoLatLng, setMemoLatLng } = useMemoLatLng();
+  // 経度、緯度をメモ管理状態をコンテキストにて管理
+  // const { memoLatLng, setMemoLatLng } = useMemoLatLng();
+  const { memoLatLng, setMemoLatLng } = useMemoLatLngContext();
 
-  // Firebaseから取得した情報を格納するカスタムフック
-  const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
+  // Firebaseから取得した情報をコンテキストにて管理
+  // const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
+  const { postingUserInformation, setPostingUserInformation } = usePostingUserInformationContext();
 
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {
     // aタグ デフォルトの処理を防ぐ
@@ -55,9 +60,9 @@ export default function PostModal() {
                 <SwiperSlide
                 key={index}
                 >
-                  {imageList.map((url) => {
+                  {imageList.map((url, index) => {
                     if(url.indexOf(userInformation.id) !== -1) {
-                      return <div className="d-f jc-c ai-c"><img src={url} alt="" className="w-70" /></div>
+                      return <div key={index} className="d-f jc-c ai-c"><img src={url} alt="" className="w-70" /></div>
                     }
                   })}
                   <p>投稿日：{userInformation.dateAndTime}</p>

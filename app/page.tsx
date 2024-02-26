@@ -2,7 +2,7 @@
 
 import MapComponent from '../libs/googleMap';
 import './styles/globals.css';
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { db, storage } from '../libs/firebase';
 import { addDoc, collection } from 'firebase/firestore';
@@ -18,8 +18,11 @@ import useLatLng from '@/hooks/useLatLng';
 import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
 import usePostingLatLng from '@/hooks/usePostingLatLng';
 import useOriginalPostingLatLng from '@/hooks/useOriginalPostingLatLng';
-import useIsOpenPostModal from '@/hooks/useIsOpenPostModal';
+import useIsOpenPostModal from '@/hooks/___useIsOpenPostModal';
 import PostModal from './components/PostModal';
+import { PostModalProvider } from './context/PostModalProvider';
+import { MemoLatLngProvider } from './context/MemoLatLngProvider';
+import { PostingUserInformationProvider } from './context/PostingUserInformationProvider';
 
 
 export default function Home() {
@@ -37,6 +40,11 @@ const { postingLatLng, setPostingLatLng } = usePostingLatLng();
 
 // 画像アップローダー起動時、既存マーカー表示、非表示を切り替えるカスタムフック
 const { originalPostingLatLng, setOriginalPostingLatLng } = useOriginalPostingLatLng();
+
+// モーダルの開閉状態を管理するカスタムフック
+// const { isOpenPostModal, setIsOpenPostModal } = useIsOpenPostModal();
+// コンポーネント間で、同じ状態を共有するためにcontextを使用
+
 
 // ハンバーガーメニューの開閉
 const [isMenuBarActive, setIsMenuBarActive] = useState<boolean>(false);
@@ -216,94 +224,100 @@ const closeImgUploaderModal = () => {
 
   return (
     <>
-      <main className="main">
-          {/* ロード時のアニメーション */}
-          <InitialAnimation />
-          <div className="search-bar-position">
-            <div className="search-bar-left" onClick={openMenu}>
-              <MenuIcon></MenuIcon>
+    <PostModalProvider>
+      <MemoLatLngProvider>
+      <PostingUserInformationProvider>
+        <main className="main">
+            {/* ロード時のアニメーション */}
+            <InitialAnimation />
+            <div className="search-bar-position">
+              <div className="search-bar-left" onClick={openMenu}>
+                <MenuIcon></MenuIcon>
+              </div>
+              <Search />
             </div>
-            <Search />
-          </div>
-          <MapComponent />
-          <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
-          <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
-          <AuthStatus openImgUploaderModal1={openImgUploaderModal1} />
-          {/* 1枚目モーダル */}
-          <div className={`img-uploader-modal ${isImgUploaderModal1 ? 'active' : ''}`}>
-            <div className="img-uploader-modal-inner">
-              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
-              <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal2}>次へ</div>
-              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+            <MapComponent />
+            <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
+            <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>
+            <AuthStatus openImgUploaderModal1={openImgUploaderModal1} />
+            {/* 1枚目モーダル */}
+            <div className={`img-uploader-modal ${isImgUploaderModal1 ? 'active' : ''}`}>
+              <div className="img-uploader-modal-inner">
+                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+                <p className="fz-sm ta-c">1.投稿したい位置にピンを刺してください。</p>
+                <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal2}>次へ</div>
+                <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+              </div>
             </div>
-          </div>
-          {/* 2枚目モーダル */}
-          <div className={`img-uploader-modal ${isImgUploaderModal2 ? 'active' : ''}`}>
-            <div className="img-uploader-modal-inner">
-              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <div className="input-wrapper mb-3p">
-                  <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
-                  <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
-              </div>
-              <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal1}>前へ</div>
-                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal3}>次へ</div>
-              </div>
-              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
-            </div>
-          </div>
-          {/* 3枚目モーダル */}
-          <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
-            <div className="img-uploader-modal-inner">
-              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <div className="input-wrapper mb-3p">
-                  <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
-                  <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
-              </div>
-              <div className="d-f mx-a ai-c jc-c gap-3">
-                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal2}>前へ</div>
-                <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal4}>次へ</div>
-              </div>
-              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
-            </div>
-          </div>
-          {/* 4枚目モーダル */}
-          <div className={`img-uploader-modal ${isImgUploaderModal4 ? 'active' : ''}`}>
-            <div className="img-uploader-modal-inner">
-              <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
-              <div className="input-wrapper mb-3p">
-                  <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
-                  <textarea id="comment" className="comment-width" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
-              </div>
-              <div className="d-f jc-c">
-                <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal3}>前へ</div>
-              </div>
-              <div className="d-f jc-c mt-3p">
-                <div className="img-uploader-orange-btn" onClick={upLoadFirebaseAndStorage}>投稿する</div>
-              </div>
-              <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
-            </div>
-          </div>
-          {/* 投稿モーダル表示 */}
-          <PostModal />
-          {/* アップロード状況 */}
-          <div className={`grey-filter ${uploadStatusModal ? 'active' : ''}`}></div>
-          <div className={`uploadStatusModal ${uploadStatusModal ? 'active' : ''}`}>
-            {loading ? (
-              <p className="fz-xl">アップロード中です…</p>
-            ) : (
-              isUploaded ? (
-                <div>
-                  <p className="fz-xl">アップロードが完了しました。</p>
-                  <div className="img-uploader-blue-btn mx-a w-20 py-1p" onClick={closeUploadStatusModal}>OK</div>
+            {/* 2枚目モーダル */}
+            <div className={`img-uploader-modal ${isImgUploaderModal2 ? 'active' : ''}`}>
+              <div className="img-uploader-modal-inner">
+                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+                <div className="input-wrapper mb-3p">
+                    <label htmlFor="date-and-time">2.撮影日時を登録してください。</label>
+                    <input type="datetime-local" id="date-and-time" value={dateAndTime} onChange={(e) => setDateAndTime(e.target.value)} />
                 </div>
+                <div className="d-f mx-a ai-c jc-c gap-3">
+                  <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal1}>前へ</div>
+                  <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal3}>次へ</div>
+                </div>
+                <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+              </div>
+            </div>
+            {/* 3枚目モーダル */}
+            <div className={`img-uploader-modal ${isImgUploaderModal3 ? 'active' : ''}`}>
+              <div className="img-uploader-modal-inner">
+                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+                <div className="input-wrapper mb-3p">
+                    <label htmlFor="img-fileup">3.画像ファイルを添付してください。(png、jpg形式のみ可能です)</label>
+                    <input type="file" id="img-fileup" accept="image/png, image/jpeg" onChange={handleImgSelect} />
+                </div>
+                <div className="d-f mx-a ai-c jc-c gap-3">
+                  <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal2}>前へ</div>
+                  <div className="img-uploader-blue-btn w-10 sp-w-25 py-1p sp-py-3p" onClick={openImgUploaderModal4}>次へ</div>
+                </div>
+                <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+              </div>
+            </div>
+            {/* 4枚目モーダル */}
+            <div className={`img-uploader-modal ${isImgUploaderModal4 ? 'active' : ''}`}>
+              <div className="img-uploader-modal-inner">
+                <p className="fz-m ta-c">画像を投稿する(簡単4STEP)</p>
+                <div className="input-wrapper mb-3p">
+                    <label htmlFor="comment">4.コメントがある場合は入力してください。</label>
+                    <textarea id="comment" className="comment-width" value={textArea} onChange={(e) => setTextArea(e.target.value)} />
+                </div>
+                <div className="d-f jc-c">
+                  <div className="img-uploader-blue-btn mx-a w-20 sp-w-50 py-1p sp-py-3p" onClick={openImgUploaderModal3}>前へ</div>
+                </div>
+                <div className="d-f jc-c mt-3p">
+                  <div className="img-uploader-orange-btn" onClick={upLoadFirebaseAndStorage}>投稿する</div>
+                </div>
+                <div className="img-uploader-under-line-btn" onClick={closeImgUploaderModal}>投稿をやめる</div>
+              </div>
+            </div>
+            {/* 投稿モーダル表示 */}
+            <PostModal />
+            {/* アップロード状況 */}
+            <div className={`grey-filter ${uploadStatusModal ? 'active' : ''}`}></div>
+            <div className={`uploadStatusModal ${uploadStatusModal ? 'active' : ''}`}>
+              {loading ? (
+                <p className="fz-xl">アップロード中です…</p>
               ) : (
-                null
-              )
-            )}
-          </div>
-      </main>
+                isUploaded ? (
+                  <div>
+                    <p className="fz-xl">アップロードが完了しました。</p>
+                    <div className="img-uploader-blue-btn mx-a w-20 py-1p" onClick={closeUploadStatusModal}>OK</div>
+                  </div>
+                ) : (
+                  null
+                )
+              )}
+            </div>
+        </main>
+      </PostingUserInformationProvider>
+      </MemoLatLngProvider>
+    </PostModalProvider>
     </>
   );
 }
