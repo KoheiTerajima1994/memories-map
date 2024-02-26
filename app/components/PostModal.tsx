@@ -2,9 +2,6 @@
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
-// import useIsOpenPostModal from '@/hooks/useIsOpenPostModal';
-// import useMemoLatLng from '@/hooks/useMemoLatLng';
-import usePostingUserInformation from '@/hooks/___usePostingUserInformation';
 import { MouseEvent, useEffect, useState } from 'react';
 import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import { storage } from '../../libs/firebase';
@@ -21,7 +18,6 @@ export default function PostModal() {
   const { memoLatLng, setMemoLatLng } = useMemoLatLngContext();
 
   // Firebaseから取得した情報をコンテキストにて管理
-  // const { postingUserInformation, setPostingUserInformation } = usePostingUserInformation();
   const { postingUserInformation, setPostingUserInformation } = usePostingUserInformationContext();
 
   const closePostModal = (e: MouseEvent<HTMLAnchorElement>) => {

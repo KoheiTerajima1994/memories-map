@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { db } from '../../libs/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { Marker } from '@react-google-maps/api';
-// import usePostingUserInformation from "@/hooks/___usePostingUserInformation";
 import usePostingLatLng from "@/hooks/usePostingLatLng";
-// import useIsOpenPostModal from "@/hooks/useIsOpenPostModal";
-// import useMemoLatLng from "@/hooks/useMemoLatLng";
 import { usePostModalContext } from "../context/PostModalProvider";
 import { useMemoLatLngContext } from "../context/MemoLatLngProvider";
 import { usePostingUserInformationContext } from "../context/PostingUserInformationProvider";
@@ -32,9 +29,8 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
     const { isOpenPostModal, setIsOpenPostModal } = usePostModalContext();
 
     // 経度、緯度をメモ管理状態をコンテキストにて管理
-    // const { memoLatLng, setMemoLatLng } = useMemoLatLng();
     const { memoLatLng, setMemoLatLng } = useMemoLatLngContext();
-    
+
     // firebaseに登録したものを全て取得する
     useEffect(() => {
         const postingLocationRead = async () => {
@@ -43,7 +39,7 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
 
         const unsubscribe = onSnapshot(collectionRef, (querySnapshot) => {
             // オブジェクトを格納する配列{ lat: number; lng: number }[]はオブジェクト型の配列を示している
-            
+
             // 取得する値の型定義
             const locations: { lat: number; lng: number }[] = [];
             const userInformation: {

@@ -5,16 +5,17 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import "swiper/css";
 import FirebasePinImport from '@/app/components/FirebasePinImport';
 import useLatLng from '@/hooks/useLatLng';
-import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
+// import useMapClickOparationEnabled from '@/hooks/useMapClickOparationEnabled';
 import useMarkerPoint from '@/hooks/useMarkerPoint';
+import { useMapClickOparationEnabledContext } from '@/app/context/MapClickOparationEnabledProvider';
 
 const MapComponent = () => {
 
   // 経度、緯度の状態管理をするカスタムフック
   const { latLng, setLatLng } = useLatLng();
 
-  // マップクリックを有効にするカスタムフック
-  const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabled();
+  // マップクリックを有効状態をコンテキストにて管理
+  const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabledContext();
 
   // マップ初期位置を格納するカスタムフック
   const { markerPoint, setMarkerPoint } = useMarkerPoint();

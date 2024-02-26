@@ -15,6 +15,7 @@ interface MemoLatLngProviderProps {
     children: ReactNode;
 }
 
+// コンテキストを提供するコンポーネント(プロバイダー)
 export const MemoLatLngProvider = ({ children }: MemoLatLngProviderProps) => {
   const [memoLatLng, setMemoLatLng] = useState<{lat: number, lng: number}[] | null>(null);
 

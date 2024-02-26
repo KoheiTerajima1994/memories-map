@@ -16,6 +16,7 @@ interface PostModalProviderProps {
     children: ReactNode;
 }
 
+// コンテキストを提供するコンポーネント(プロバイダー)
 export const PostModalProvider = ({ children }: PostModalProviderProps) => {
   const [isOpenPostModal, setIsOpenPostModal] = useState(false);
 
