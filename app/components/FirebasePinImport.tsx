@@ -9,14 +9,7 @@ import { useMemoLatLngContext } from "../context/MemoLatLngProvider";
 import { usePostingUserInformationContext } from "../context/PostingUserInformationProvider";
 import { usePostingLatLngContext } from "../context/PostingLatLngProvider";
 
-type LatLng = {
-    lat: number;
-    lng: number;
-} | null;
-
-export default function FirebasePinImport(props: {latLng: LatLng }) {
-    // props受け取り
-    const { latLng } = props;
+export default function FirebasePinImport() {
     // Firebaseに登録した場所をインポートしたい
     // Firebaseから取得したピン立てをコンテキストにて管理
     const { postingLatLng, setPostingLatLng } = usePostingLatLngContext();
@@ -139,7 +132,7 @@ export default function FirebasePinImport(props: {latLng: LatLng }) {
 
     return (
         <>
-        {/* これはFirebaseから持ってきたピン */}
+        {/* これはFirebaseからインポートしたピン */}
         {postingLatLng !== null && postingLatLng.map((location, index) => (
             <Marker key={index} position={location} onClick={openPostModal} />
         ))}

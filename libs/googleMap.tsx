@@ -69,7 +69,7 @@ const MapComponent = () => {
               {/* これはピン立て用 */}
               {latLng && <Marker position={latLng} />}
               {/* Firebaseに登録した場所をインポートする処理 */}
-              <FirebasePinImport latLng={latLng} />
+              <FirebasePinImport />
             </GoogleMap>
           </LoadScript>
         </>

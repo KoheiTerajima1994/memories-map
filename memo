@@ -89,5 +89,6 @@ const { markerPoint, setMarkerPoint } = useMarkerPoint();→完了
 未完了
 型定義のanyをやめる
 
-Firebaseから取得はできている
+providerを設置できているか？このせいで一部機能が働かないのでは？
+
 

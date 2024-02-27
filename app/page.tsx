@@ -28,6 +28,8 @@ import { UploadStatusModalProvider } from './context/UploadStatusModalProvider';
 import { LoadingProvider } from './context/LoadingProvider';
 import { UploadingProvider } from './context/IsUploadedProvider';
 import { MarkerPointProvider } from './context/MarkerPointProvider';
+import { LatLngProvider } from './context/LatLngProvider';
+import { PostingLatLngProvider } from './context/PostingLatLngProvider';
 
 
 export default function Home() {
@@ -55,6 +57,8 @@ const closeMenu = () => {
     <LoadingProvider>
     <UploadingProvider>
     <MarkerPointProvider>
+    <LatLngProvider>
+    <PostingLatLngProvider>
         <main className="main">
             {/* ロード時のアニメーション */}
             <InitialAnimation />
@@ -73,6 +77,8 @@ const closeMenu = () => {
             {/* アップロード状況 */}
             <ImgUploadStatus />
         </main>
+    </PostingLatLngProvider>
+    </LatLngProvider>
     </MarkerPointProvider>
     </UploadingProvider>
     </LoadingProvider>
