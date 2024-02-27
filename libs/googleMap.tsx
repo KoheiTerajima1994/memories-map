@@ -16,7 +16,6 @@ const MapComponent = () => {
   // マップクリックを有効状態をコンテキストにて管理
   const { mapClickOparationEnabled, setMapClickOparationEnabled } = useMapClickOparationEnabledContext();
 
-
   // マーカー初期位置をコンテキストにて管理
   const { markerPoint, setMarkerPoint } = useMarkerPointContext();
 
