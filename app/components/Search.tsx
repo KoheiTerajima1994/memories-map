@@ -3,8 +3,6 @@
 import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import { useMarkerPointContext } from "../context/MarkerPointProvider";
-// import useMarkerPoint from "@/hooks/useMarkerPoint";
-
 
 export default function Search() {
   // マーカー初期位置をコンテキストにて管理

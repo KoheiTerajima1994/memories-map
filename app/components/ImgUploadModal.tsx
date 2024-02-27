@@ -14,7 +14,8 @@ import { useUploadStatusModalContext } from '../context/UploadStatusModalProvide
 import { useLoadingContext } from '../context/LoadingProvider';
 import { useIsUpLoadingContext } from '../context/IsUploadedProvider';
 
-export default function ImgUploadModal() {
+// useAccountNameのオブジェクトの中にあるnameプロパティーがstring型を示している
+export default function ImgUploadModal({ name }: { name: string}) {
   // 経度、緯度の状態管理をコンテキストにて管理
   const { latLng, setLatLng } = useLatLngContext();
 

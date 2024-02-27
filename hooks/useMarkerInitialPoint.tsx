@@ -1,4 +1,3 @@
-// hooks/useAccountName.js
 import { useState } from 'react';
 
 // マーカーポイントの型定義

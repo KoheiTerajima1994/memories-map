@@ -75,9 +75,6 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 
 オーバーロードとは、関数に対して複数の型を定義すること
 
-2/25
-・ピンの読み込みとピン立てができなくなってしまっている
-
 コンテキスト化させるもの
 const { latLng, setLatLng } = useLatLng();→完了
 const { postingLatLng, setPostingLatLng } = usePostingLatLng();→完了
@@ -86,9 +83,10 @@ const [loading, setLoading] = useState<boolean>(false);→完了
 const [isUploaded, setIsUploaded] = useState<boolean>(false);→完了
 const { markerPoint, setMarkerPoint } = useMarkerPoint();→完了
 
-未完了
-型定義のanyをやめる
+【未完了】
+型定義のanyをやめる、型定義を再度見て学ぶ
+SP版調整
+画像リアルタイム更新どうにかならないか？
 
-providerを設置できているか？このせいで一部機能が働かないのでは？
 
 

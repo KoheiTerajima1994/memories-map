@@ -5,7 +5,14 @@ import Link from 'next/link';
 import LogoutBtn from './LogoutBtn';
 import Image from 'next/image';
 
-export default function Hamburger(props: any) {
+// 型定義
+type HamburgerTypes = {
+    name: string;
+    isMenuBarActive: boolean;
+    closeMenu: React.MouseEventHandler<SVGSVGElement>;
+}
+
+export default function Hamburger(props: HamburgerTypes) {
     const {name, isMenuBarActive, closeMenu} = props;
 
     return (
