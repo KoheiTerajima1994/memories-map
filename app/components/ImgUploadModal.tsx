@@ -30,12 +30,15 @@ export default function ImgUploadModal({ name }: { name: string}) {
 
   // 画像、音声、動画にはStorageを用いる
   // 画像パスをhandleImgSelectからonFileUploadToFirebaseへ渡す
+  // 正しい型の付け方がわからない
   const [imgPath, setImgPath] = useState<any>('');
 
+  // 正しい型の付け方がわからない
   const handleImgSelect = (e: any) => {
     console.log(e.target.files[0].name);
     const file = e.target.files[0];
     setImgPath(file);
+    console.log(file);
   }
 
   // ロード状態をコンテキストにて管理
@@ -67,7 +70,7 @@ export default function ImgUploadModal({ name }: { name: string}) {
 
   // Firebaseに投稿場所を登録
   const [textArea, setTextArea] = useState<string>("");
-  const [dateAndTime, setDateAndTime] = useState<any>("");
+  const [dateAndTime, setDateAndTime] = useState<string>("");
   const registerLocation = (uniqueId: string) => {
     // Firebaseのデータベースにデータを追加する
     // addDocはドキュメントの作成、setDocはドキュメントの作成と更新

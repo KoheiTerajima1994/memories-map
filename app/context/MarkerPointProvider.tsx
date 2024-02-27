@@ -8,6 +8,7 @@ type LatLng = {
   lng: number,
 }
 // type MarkerPoint = LatLng | null;
+// 正しい型の付け方がわからない
 type MarkerPoint = any;
 
 // コンテキスト作成

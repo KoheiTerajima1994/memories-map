@@ -16,7 +16,6 @@ https://zenn.dev/akimotoha/articles/bce666521c43c1
 https://qiita.com/Naoya_pro/items/833d91f51770892abeb1
 https://www.youtube.com/watch?v=CDW_yryn1Rc&list=PLX8Rsrpnn3IWavNOj3n4Vypzwb3q1RXhr&index=15
 
-
 1/18マスト内容！！！！
 登録されたピンを表示させる！！！
 →登録されたピンを表示できた…！エラーは消えないが…
@@ -27,8 +26,6 @@ openImgUploaderの中でuseStateをtrueにする、handleMapClickがMAPの処理
 →これがうまくいったら、写真表示とswiper入れる
 →写真表示もうまくいっていない
 →詰まり気味なので、CSS、UIを進める、適宜リファクタリングも
-
-Wantedly文章を見直し、ポートフォリオについてもっと書く
 
 https://qiita.com/soarflat/items/b9d3d17b8ab1f5dbfed2
 
@@ -55,8 +52,6 @@ https://www.youtube.com/watch?v=v_hR4K4auoQ&list=PLl-K7zZEsYLluG5MCVEzXAQ7ACZBCu
 ・UI、CSS調整
 
 ・資料作成
-
-
 
 【処理を分ける】
 ・初回読み込み時の表示画面→完了

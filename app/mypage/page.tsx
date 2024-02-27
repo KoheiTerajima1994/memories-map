@@ -3,7 +3,7 @@
 import React, { useState, MouseEvent, useEffect } from 'react';
 import '../styles/globals.css';
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, reauthenticateWithCredential, sendEmailVerification, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword, updateProfile } from 'firebase/auth';
+import { onAuthStateChanged, reauthenticateWithCredential, sendEmailVerification, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword, updateProfile, User } from 'firebase/auth';
 import { auth } from '@/libs/firebase';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -33,7 +33,7 @@ const MyPage = () => {
     const [credentialPassword2, setCredentialPassword2] = useState<string>("");
     const [changeAccountName, setChangeAccountName] = useState<string>("");
 
-    const user = auth.currentUser;
+    const user: User | null = auth.currentUser;
 
     const handleClickSendEmail = async (e: MouseEvent<HTMLAnchorElement>, passElement: string) => {
         // aタグ デフォルトの処理を防ぐ
@@ -55,9 +55,13 @@ const MyPage = () => {
     }
 
     // 古いメールアドレスにメールを送り、認証を求める処理
-    const sendEmailVerificationWrapper = async (user: any) => {
+    const sendEmailVerificationWrapper = async (user: User | null) => {
         try {
-            await sendEmailVerification(user);
+            if(user) {
+                await sendEmailVerification(user);
+            } else {
+                throw new Error("nullです");
+            }
         } catch (error) {
             console.error("メール確認の送信に失敗しました。", error);
             throw error;
@@ -148,7 +152,7 @@ const MyPage = () => {
                         <a href="" className="img-uploader-blue-btn w-70 py-3p" onClick={handleClickChangeEmail}>メールアドレス変更</a>
                     </div>
                 </div>
-                <div className="w-20 sp-w-90 sp-mx-a sp-my-15p"> 
+                <div className="w-20 sp-w-90 sp-mx-a sp-my-15p">
                     <p className="fz-m ta-c">パスワード変更</p>
                     <div>
                         <label htmlFor="passwordChange" className="d-b">1,パスワード入力</label>

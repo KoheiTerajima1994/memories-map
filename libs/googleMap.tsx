@@ -44,6 +44,7 @@ const MapComponent = () => {
   // 参照を保持し、その値をメモ化しているので、再レンダリングが起こらない
   const mapRef = useRef();
   // メモ化されたコールバックを返す
+  // 正しい型の付け方がわからない
   const onMapLoad = useCallback((map: any) => {
     mapRef.current = map;
   }, []);

@@ -49,7 +49,7 @@ export default function PostModal() {
           {/* 投稿モーダル表示 */}
           <div className={`grey-filter ${isOpenPostModal ? 'active' : ''}`} onClick={closePostModalBygreyFilter}></div>
           <div className={`post-modal d-f fd-c ${isOpenPostModal ? "active" : ''}`}>
-            <Swiper className="sample-slider w-30">
+            <Swiper className="sample-slider w-30 sp-w-90">
             {memoLatLng && postingUserInformation !== null && postingUserInformation.map((userInformation, index) => (
               // {useStateにてセットした緯度経度とuserInformation.lat,userInformation.lngが一致すれば、表示}
               userInformation.lat === memoLatLng[0].lat && userInformation.lng === memoLatLng[0].lng && (
@@ -71,7 +71,7 @@ export default function PostModal() {
                 )
               ))}
             </Swiper>
-            <a href="" className="img-uploader-blue-btn w-30 py-1p" onClick={closePostModal}>モーダルを閉じる</a>
+            <a href="" className="img-uploader-blue-btn w-30 sp-w-50 py-1p" onClick={closePostModal}>モーダルを閉じる</a>
           </div>
         </>
     )
