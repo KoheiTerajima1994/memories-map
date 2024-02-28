@@ -14,7 +14,6 @@ export default function PostModal() {
   const { isOpenPostModal, setIsOpenPostModal } = usePostModalContext();
 
   // 経度、緯度をメモ管理状態をコンテキストにて管理
-  // const { memoLatLng, setMemoLatLng } = useMemoLatLng();
   const { memoLatLng, setMemoLatLng } = useMemoLatLngContext();
 
   // Firebaseから取得した情報をコンテキストにて管理

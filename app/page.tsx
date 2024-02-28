@@ -33,7 +33,7 @@ const openMenu = () => {
   setIsMenuBarActive(true);
 }
 const closeMenu = () => {
-    setIsMenuBarActive(false);
+  setIsMenuBarActive(false);
 }
 
   return (
@@ -57,8 +57,10 @@ const closeMenu = () => {
               <div className="search-bar-left" onClick={openMenu}>
                 <MenuIcon></MenuIcon>
               </div>
+              {/* 検索機能 */}
               <Search />
             </div>
+            {/* マップ、ピン立て処理 */}
             <MapComponent />
             <Hamburger name={name} isMenuBarActive={isMenuBarActive} closeMenu={closeMenu} />
             <div className={`grey-filter ${isMenuBarActive ? 'active' : ''}`} onClick={closeMenu}></div>

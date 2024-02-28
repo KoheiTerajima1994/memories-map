@@ -56,7 +56,7 @@ const MapComponent = () => {
             <GoogleMap
               // mapの大きさ
               mapContainerStyle={mapContainerStyle}
-              // mapの初期位置
+              // mapの初期位置、検索後の位置
               center={markerPoint}
               // mapの縮尺
               zoom={15}
