@@ -121,6 +121,13 @@ a {
 }
 .mapIcon img {
     width: 40%;
+    max-width: 100%;
+    height: auto;
+  }
+@media (max-width: 767px) {
+  .mapIcon img {
+    width: 30%;
+  }
 }
 .initial-anm-title {
     text-align: center;
@@ -489,37 +496,27 @@ html {
 .fz-xl {
   font-size: 3rem;
 }
-.sp-fz-xs {
-  font-size: 1rem;
-}
-.sp-fz-s {
-  @media (max-width: 767px) {
+@media (max-width: 767px) {
+  .sp-fz-xs {
+    font-size: 1rem;
+  }
+  .sp-fz-s {
     font-size: 1.4rem;
   }
-}
-.sp-fz-sm {
-  @media (max-width: 767px) {
-  font-size: 1.6rem;
+  .sp-fz-sm {
+    font-size: 1.6rem;
   }
-}
-.sp-fz-m {
-  @media (max-width: 767px) {
-  font-size: 1.8rem;
+  .sp-fz-m {
+    font-size: 1.8rem;
   }
-}
-.sp-fz-ml {
-  @media (max-width: 767px) {
-  font-size: 2rem;
+  .sp-fz-ml {
+    font-size: 2rem;
   }
-}
-.sp-fz-l {
-  @media (max-width: 767px) {
-  font-size: 2.2rem;
+  .sp-fz-l {
+    font-size: 2.2rem;
   }
-}
-.sp-fz-xl {
-  @media (max-width: 767px) {
-  font-size: 3rem;
+  .sp-fz-xl {
+    font-size: 3rem;
   }
 }
 .lh-sm {
